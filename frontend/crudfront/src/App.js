@@ -3,9 +3,9 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./layout/Navbar";
 import Home from "./pages/Home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AddUser from "./users/AddUser";
-import EditUser from "./users/EditUser";
-import ViewUser from "./users/ViewUser";
+import AddProduct from "./product/AddProduct";
+import EditProduct from "./product/EditProduct";
+import ViewProduct from "./product/ViewProduct";
 
 function App() {
   return (
@@ -15,9 +15,9 @@ function App() {
 
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route exact path="/adduser" element={<AddUser />} />
-          <Route exact path="/edituser/:id" element={<EditUser />} />
-          <Route exact path="/viewuser/:id" element={<ViewUser />} />
+          <Route exact path="/addproduct" element={<AddProduct />} />
+          <Route exact path="/editproduct/:id" element={<EditProduct />} />
+          <Route exact path="/viewproduct/:id" element={<ViewProduct />} />
         </Routes>
       </Router>
     </div>

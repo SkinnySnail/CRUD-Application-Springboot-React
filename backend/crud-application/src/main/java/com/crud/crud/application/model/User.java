@@ -3,10 +3,10 @@ package com.crud.crud.application.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
 
 @Entity
-@Table(name = "user_table") // Avoid reserved keyword "user" by renaming table
+
 public class User {
 
     @Id
@@ -16,6 +16,7 @@ public class User {
     private String username;
     private String name;
     private String email;
+
 
     public Long getId() {
         return id;
@@ -49,3 +50,7 @@ public class User {
         this.email = email;
     }
 }
+
+
+
+

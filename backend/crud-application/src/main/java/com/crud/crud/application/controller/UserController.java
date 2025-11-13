@@ -6,8 +6,10 @@ import com.crud.crud.application.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
 @RestController
 @CrossOrigin("http://localhost:3000")
+@RequestMapping("/api")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
@@ -37,17 +39,16 @@ public class UserController {
             return userRepository.save((user));
         }).orElseThrow(() -> new UserNotFoundException(id));
     }
+
     @DeleteMapping("/user/{id}")
-    String deleteUser(@PathVariable Long id){
-        if(!userRepository.existsById(id)){
-            throw new  UserNotFoundException(id);
+    String deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
 
         }
         userRepository.deleteById(id);
-        return "user with id " +id+ "has been deleted successfylly";
+        return "user with id " + id + "has been deleted successfylly";
 
     }
 
 }
-
-

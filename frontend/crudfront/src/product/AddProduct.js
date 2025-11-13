@@ -1,20 +1,20 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { validateProduct } from "../util/productValidation";
+import { validateProduct, VALID_CATEGORIES } from "../util/productValidation";
 
 export default function AddProduct() {
   let navigate = useNavigate();
 
   const [product, setProduct] = useState({
-    productName: "",
+    name: "",
     price: "",
     quantity: "",
     description: "",
     category: "",
   });
 
-  const { productName, price, quantity, description, category } = product;
+  const { name, price, quantity, description, category } = product;
 
   const onInputChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -48,8 +48,8 @@ export default function AddProduct() {
                 type="text"
                 className="form-control"
                 placeholder="Enter product name"
-                name="productName"
-                value={productName}
+                name="name"
+                value={name}
                 onChange={(e) => onInputChange(e)}
               />
             </div>
@@ -95,14 +95,19 @@ export default function AddProduct() {
               <label htmlFor="Category" className="form-label">
                 Category
               </label>
-              <input
-                type="text"
+              <select
                 className="form-control"
-                placeholder="Enter category"
                 name="category"
                 value={category}
                 onChange={(e) => onInputChange(e)}
-              />
+              >
+                <option value="">Select a category</option>
+                {VALID_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn btn-outline-primary">
               Submit

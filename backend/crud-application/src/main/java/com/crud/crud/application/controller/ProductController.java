@@ -1,55 +1,50 @@
 package com.crud.crud.application.controller;
 
-import com.crud.crud.application.exception.ProductNotFoundException;
-import com.crud.crud.application.model.Product;
-import com.crud.crud.application.repository.ProductRepository;
+import com.crud.crud.application.dto.ProductDto;
+import com.crud.crud.application.entity.Product;
+import com.crud.crud.application.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
 public class ProductController {
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @PostMapping("/product")
-    Product newProduct(@RequestBody Product newProduct) {
-        return productRepository.save(newProduct);
+    ResponseEntity<Product> newProduct(@RequestBody ProductDto productDto) {
+        Product product = productService.createProduct(productDto.toEntity());
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/products")
-    List<Product> getAllProducts() {
-        return productRepository.findAll();
+    ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/product/{id}")
-    Product getProductById(@PathVariable Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Product product = productService.getProductById(id);
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/product/{id}")
-    Product updateProduct(@RequestBody Product newProduct, @PathVariable Long id) {
-        return productRepository.findById(id).map(product -> {
-            product.setProductName(newProduct.getProductName());
-            product.setPrice(newProduct.getPrice());
-            product.setQuantity(newProduct.getQuantity());
-            product.setDescription(newProduct.getDescription());
-            product.setCategory(newProduct.getCategory());
-            return productRepository.save(product);
-        }).orElseThrow(() -> new ProductNotFoundException(id));
+    ResponseEntity<Product> updateProduct(@RequestBody ProductDto productDto, @PathVariable Long id) {
+        Product updatedProduct = productService.updateProduct(id, productDto.toEntity());
+        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/product/{id}")
-    String deleteProduct(@PathVariable Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new ProductNotFoundException(id);
-
-        }
-        productRepository.deleteById(id);
-        return "Product with id " + id + " has been deleted successfully";
-
+    ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        boolean deleted = productService.deleteProduct(id);
+        return deleted ? ResponseEntity.ok("Product deleted successfully") : ResponseEntity.notFound().build();
     }
-
 }

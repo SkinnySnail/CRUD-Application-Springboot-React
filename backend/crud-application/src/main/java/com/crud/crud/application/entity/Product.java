@@ -1,4 +1,4 @@
-package com.crud.crud.application.model;
+package com.crud.crud.application.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -83,7 +83,3 @@ public class Product {
         this.category = category;
     }
 }
-
-
-
-

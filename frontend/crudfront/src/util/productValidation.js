@@ -1,11 +1,11 @@
 // utils/productValidation.js
 
-const VALID_CATEGORIES = ['Electronics', 'Clothing', 'Food', 'Books', 'Toys'];
+export const VALID_CATEGORIES = ['Electronics', 'Clothing', 'Food', 'Books', 'Toys'];
 
 export function validateProduct(product) {
   const errors = {};
 
-  // Validate Name
+  // Validate Product Name
   if (!product.name || product.name.trim() === '') {
     errors.name = 'Product name is required';
   } else if (product.name.length < 3) {

@@ -9,14 +9,14 @@ export default function EditProduct() {
   const { id } = useParams();
 
   const [product, setProduct] = useState({
-    productName: "",
+    name: "",
     price: "",
     quantity: "",
     description: "",
     category: "",
   });
 
-  const { productName, price, quantity, description, category } = product;
+  const { name, price, quantity, description, category } = product;
 
   const onInputChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -59,8 +59,8 @@ export default function EditProduct() {
                 type="text"
                 className="form-control"
                 placeholder="Enter product name"
-                name="productName"
-                value={productName}
+                name="name"
+                value={name}
                 onChange={(e) => onInputChange(e)}
               />
             </div>

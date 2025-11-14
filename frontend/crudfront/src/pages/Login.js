@@ -44,8 +44,13 @@ export default function Login() {
             const response = await axios.post("http://localhost:8080/auth/login", loginData);
 
             if (response.data.success) {
-                // Store user info and token (if you implement JWT)
+                // Store user info and JWT token
                 localStorage.setItem("user", JSON.stringify(response.data.user));
+                localStorage.setItem("token", response.data.token);
+
+                // Store token expiration time
+                const expirationTime = new Date().getTime() + response.data.expiresIn;
+                localStorage.setItem("tokenExpiration", expirationTime.toString());
 
                 // Trigger storage event for other components
                 window.dispatchEvent(new Event("storage"));

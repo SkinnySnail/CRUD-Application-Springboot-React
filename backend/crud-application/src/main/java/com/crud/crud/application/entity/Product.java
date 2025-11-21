@@ -29,7 +29,6 @@ public class Product {
     @NotBlank
     private String category;
 
-    @Transient
     private static final List<String> VALID_CATEGORIES = List.of("Electronics", "Books", "Clothing", "Home", "Toys");
 
     public Long getId() {

@@ -3,7 +3,7 @@
 export function validateUsername(username) {
   // Rỗng
   if (!username || username.trim() === '') {
-    return 'Username is required';
+    return 'Username is required!';
   }
 
   // Khoảng trắng đầu/cuối
@@ -33,7 +33,7 @@ export function validateUsername(username) {
 export function validatePassword(password) {
   // Rỗng
   if (!password || password.trim() === '') {
-    return 'Password is required';
+    return 'Password is required!';
   }
 
   // Khoảng trắng
@@ -54,7 +54,7 @@ export function validatePassword(password) {
   // Phải có cả chữ VÀ số
   const hasLetter = /[a-zA-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  
+
   if (!hasLetter || !hasNumber) {
     return 'Password must contain both letters and numbers';
   }

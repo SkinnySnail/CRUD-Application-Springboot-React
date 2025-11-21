@@ -56,6 +56,14 @@ class ProductServiceTest {
     void testGetProductById() {
         // Arrange
         Long productId = 1L;
+        Product product = new Product();
+        product.setId(productId);
+        product.setProductName("Laptop Dell");
+        product.setPrice(15000000.0);
+        product.setQuantity(10);
+        product.setCategory("Electronics");
+
+        when(productRepository.findById(productId)).thenReturn(java.util.Optional.of(product));
 
         // Act
         Product result = productService.getProductById(productId);
@@ -63,6 +71,7 @@ class ProductServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(productId, result.getId());
+        assertEquals("Laptop Dell", result.getProductName());
     }
 
     @Test
@@ -70,18 +79,31 @@ class ProductServiceTest {
     void testUpdateProduct() {
         // Arrange
         Long productId = 1L;
-        ProductDto updateDto = new ProductDto();
-        updateDto.setName("Laptop Dell Updated");
-        updateDto.setPrice(14000000);
-        updateDto.setQuantity(15);
+        Product existingProduct = new Product();
+        existingProduct.setId(productId);
+        existingProduct.setProductName("Laptop Dell");
+        existingProduct.setPrice(15000000.0);
+        existingProduct.setQuantity(10);
+        existingProduct.setCategory("Electronics");
+
+        Product updatedProduct = new Product();
+        updatedProduct.setId(productId);
+        updatedProduct.setProductName("Laptop Dell Updated");
+        updatedProduct.setPrice(14000000.0);
+        updatedProduct.setQuantity(15);
+        updatedProduct.setCategory("Electronics");
+
+        when(productRepository.findById(productId)).thenReturn(java.util.Optional.of(existingProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
 
         // Act
-        Product result = productService.updateProduct(productId, updateDto.toEntity());
+        Product result = productService.updateProduct(productId, updatedProduct);
 
         // Assert
         assertNotNull(result);
         assertEquals("Laptop Dell Updated", result.getProductName());
-        assertEquals(14000000, result.getPrice());
+        assertEquals(14000000.0, result.getPrice());
+        assertEquals(15, result.getQuantity());
     }
 
     @Test
@@ -89,11 +111,15 @@ class ProductServiceTest {
     void testDeleteProduct() {
         // Arrange
         Long productId = 1L;
+        when(productRepository.existsById(productId)).thenReturn(true);
+        doNothing().when(productRepository).deleteById(productId);
 
         // Act
         boolean result = productService.deleteProduct(productId);
 
         // Assert
         assertTrue(result);
+        verify(productRepository, times(1)).existsById(productId);
+        verify(productRepository, times(1)).deleteById(productId);
     }
 }

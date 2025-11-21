@@ -21,7 +21,7 @@ public class ProductController {
 
     @PostMapping("/product")
     ResponseEntity<Product> newProduct(@RequestBody ProductDto productDto) {
-        Product product = productService.createProduct(productDto.toEntity());
+        Product product = productService.createProduct(productDto);
         return ResponseEntity.ok(product);
     }
 
@@ -38,7 +38,7 @@ public class ProductController {
 
     @PutMapping("/product/{id}")
     ResponseEntity<Product> updateProduct(@RequestBody ProductDto productDto, @PathVariable Long id) {
-        Product updatedProduct = productService.updateProduct(id, productDto.toEntity());
+        Product updatedProduct = productService.updateProduct(id, productDto);
         return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();
     }
 

@@ -42,7 +42,7 @@ public class AuthController {
         }
 
         // Attempt login
-        User user = userService.login(userDto.getUsername(), userDto.getPassword());
+        User user = userService.login(userDto);
 
         if (user != null) {
             // Generate JWT token
@@ -85,7 +85,7 @@ public class AuthController {
         }
 
         // Create new user
-        User newUser = userService.createUser(userDto.toEntity());
+        User newUser = userService.createUser(userDto);
         response.put("success", true);
         response.put("message", "User registered successfully");
         response.put("user", UserDto.fromEntity(newUser));

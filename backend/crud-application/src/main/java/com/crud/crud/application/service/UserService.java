@@ -1,5 +1,6 @@
 package com.crud.crud.application.service;
 
+import com.crud.crud.application.dto.UserDto;
 import com.crud.crud.application.entity.User;
 import com.crud.crud.application.repository.UserRepository;
 import com.crud.crud.application.util.PasswordUtil;
@@ -17,24 +18,31 @@ public class UserService {
     @Autowired
     private PasswordUtil passwordUtil;
 
-    public User login(String username, String password) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+    public User login(UserDto userDto) {
+        Optional<User> userOptional = userRepository.findByUsername(userDto.getUsername());
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             // Verify password using BCrypt hashing
-            if (passwordUtil.verifyPassword(password, user.getPassword())) {
+            if (passwordUtil.verifyPassword(userDto.getPassword(), user.getPassword())) {
                 return user;
             }
         }
         return null;
     }
 
+    // Overloaded method for backward compatibility
+    public User login(String username, String password) {
+        UserDto userDto = new UserDto(username, password);
+        return login(userDto);
+    }
+
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
 
-    public User createUser(User user) {
+    public User createUser(UserDto userDto) {
+        User user = userDto.toEntity();
         // Hash the password before saving
         String hashedPassword = passwordUtil.hashPassword(user.getPassword());
         user.setPassword(hashedPassword);

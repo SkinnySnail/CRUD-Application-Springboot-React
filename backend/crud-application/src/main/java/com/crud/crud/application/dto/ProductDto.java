@@ -5,15 +5,15 @@ import com.crud.crud.application.entity.Product;
 public class ProductDto {
     private Long id;
     private String name;
-    private double price;
-    private int quantity;
+    private Double price;
+    private Integer quantity;
     private String category;
     private String description;
 
     public ProductDto() {
     }
 
-    public ProductDto(String name, long price, int quantity, String category) {
+    public ProductDto(String name, Double price, Integer quantity, String category) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -37,19 +37,19 @@ public class ProductDto {
         this.name = name;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -75,8 +75,33 @@ public class ProductDto {
         product.setProductName(this.name);
         product.setPrice(this.price);
         product.setQuantity(this.quantity);
-        product.setCategory(this.category);
+        if (this.category != null) {
+            product.setCategory(this.category);
+        }
         product.setDescription(this.description);
         return product;
+    }
+
+    public static ProductDto fromEntity(Product product) {
+        ProductDto dto = new ProductDto();
+        dto.setId(product.getId());
+        dto.setName(product.getProductName());
+        dto.setPrice(product.getPrice());
+        dto.setQuantity(product.getQuantity());
+        dto.setCategory(product.getCategory());
+        dto.setDescription(product.getDescription());
+        return dto;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

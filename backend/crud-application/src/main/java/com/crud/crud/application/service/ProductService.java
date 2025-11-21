@@ -5,20 +5,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.crud.crud.application.dto.ProductDto;
 import com.crud.crud.application.entity.Product;
-import com.crud.crud.application.repository.ProductRepository;;
+import com.crud.crud.application.repository.ProductRepository;
 
 @Service
 public class ProductService {
     @Autowired
-    private ProductRepository ProductRepository;
+    private ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository) {
-        ProductRepository = productRepository;
+        this.productRepository = productRepository;
     }
 
     public ProductService() {
-        // TODO Auto-generated constructor stub
+        // Default constructor
     }
 
     /**
@@ -27,8 +28,9 @@ public class ProductService {
      * @param productDto product data to create
      * @return created product with ID
      */
-    public Product createProduct(Product product) {
-        return ProductRepository.save(product);
+    public Product createProduct(ProductDto productDto) {
+        Product product = productDto.toEntity();
+        return productRepository.save(product);
     }
 
     /**
@@ -38,34 +40,34 @@ public class ProductService {
      * @return product data or null if not found
      */
     public Product getProductById(Long id) {
-        return ProductRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElse(null);
     }
 
     /**
      * Update product
      * 
-     * @param id        product ID to update
-     * @param updateDto new product data
+     * @param id         product ID to update
+     * @param productDto new product data
      * @return updated product
      */
-    public Product updateProduct(Long id, Product updateProduct) {
-        return ProductRepository.findById(id).map(existingProduct -> {
-            if (updateProduct.getProductName() != null) {
-                existingProduct.setProductName(updateProduct.getProductName());
+    public Product updateProduct(Long id, ProductDto productDto) {
+        return productRepository.findById(id).map(existingProduct -> {
+            if (productDto.getName() != null && !productDto.getName().trim().isEmpty()) {
+                existingProduct.setProductName(productDto.getName());
             }
-            if (updateProduct.getPrice() > 0) {
-                existingProduct.setPrice(updateProduct.getPrice());
+            if (productDto.getPrice() != null && productDto.getPrice() > 0) {
+                existingProduct.setPrice(productDto.getPrice());
             }
-            if (updateProduct.getQuantity() >= 0) {
-                existingProduct.setQuantity(updateProduct.getQuantity());
+            if (productDto.getQuantity() != null && productDto.getQuantity() >= 0) {
+                existingProduct.setQuantity(productDto.getQuantity());
             }
-            if (updateProduct.getCategory() != null) {
-                existingProduct.setCategory(updateProduct.getCategory());
+            if (productDto.getCategory() != null && !productDto.getCategory().trim().isEmpty()) {
+                existingProduct.setCategory(productDto.getCategory());
             }
-            if (updateProduct.getDescription() != null) {
-                existingProduct.setDescription(updateProduct.getDescription());
+            if (productDto.getDescription() != null) {
+                existingProduct.setDescription(productDto.getDescription());
             }
-            return ProductRepository.save(existingProduct);
+            return productRepository.save(existingProduct);
         }).orElse(null);
     }
 
@@ -76,8 +78,8 @@ public class ProductService {
      * @return true if deleted, false if not found
      */
     public boolean deleteProduct(Long id) {
-        if (ProductRepository.existsById(id)) {
-            ProductRepository.deleteById(id);
+        if (productRepository.existsById(id)) {
+            productRepository.deleteById(id);
             return true;
         }
         return false;
@@ -89,6 +91,6 @@ public class ProductService {
      * @return list of all products
      */
     public List<Product> getAllProducts() {
-        return ProductRepository.findAll();
+        return productRepository.findAll();
     }
 }

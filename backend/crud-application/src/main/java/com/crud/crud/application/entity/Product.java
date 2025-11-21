@@ -31,6 +31,30 @@ public class Product {
 
     private static final List<String> VALID_CATEGORIES = List.of("Electronics", "Books", "Clothing", "Home", "Toys");
 
+    public Product(Long id, @NotBlank @Size(min = 3, max = 100) String productName,
+            @DecimalMin(value = "0.01", inclusive = true) @DecimalMax(value = "999999999", inclusive = true) Double price,
+            @Min(0) @Max(99999) Integer quantity, @Size(max = 500) String description, @NotBlank String category) {
+        this.id = id;
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+        this.description = description;
+        this.category = category;
+    }
+
+    public Product(Long id, @NotBlank @Size(min = 3, max = 100) String productName,
+            @DecimalMin(value = "0.01", inclusive = true) @DecimalMax(value = "999999999", inclusive = true) Double price,
+            @Min(0) @Max(99999) Integer quantity, @NotBlank String category) {
+        this.id = id;
+        this.productName = productName;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+    }
+
+    public Product() {
+    }
+
     public Long getId() {
         return id;
     }

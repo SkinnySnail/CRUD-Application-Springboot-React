@@ -1,0 +1,26 @@
+# Node modules
+node_modules/*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build directories
+frontend/crudfront/build/
+backend/crud-application/target/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+# Cypress
+cypress/videos/
+cypress/screenshots/

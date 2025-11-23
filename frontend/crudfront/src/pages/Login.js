@@ -96,7 +96,6 @@ export default function Login() {
                                 name="username"
                                 value={username}
                                 onChange={(e) => onInputChange(e)}
-                                required
                             />
                         </div>
 
@@ -111,7 +110,6 @@ export default function Login() {
                                 name="password"
                                 value={password}
                                 onChange={(e) => onInputChange(e)}
-                                required
                             />
                         </div>
 

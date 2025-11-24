@@ -93,4 +93,43 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+    /**
+     * Search products by keyword (searches in name and category)
+     * 
+     * @param keyword search keyword
+     * @return list of matching products
+     */
+    public List<Product> searchProducts(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.searchByKeyword(keyword.trim());
+    }
+
+    /**
+     * Search products by name
+     * 
+     * @param name product name
+     * @return list of matching products
+     */
+    public List<Product> searchByName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByProductNameContainingIgnoreCase(name.trim());
+    }
+
+    /**
+     * Search products by category
+     * 
+     * @param category category name
+     * @return list of matching products
+     */
+    public List<Product> searchByCategory(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByCategoryContainingIgnoreCase(category.trim());
+    }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class AuthService {
 
     @Autowired
     private UserRepository userRepository;

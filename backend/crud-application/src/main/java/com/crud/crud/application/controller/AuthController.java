@@ -3,7 +3,7 @@ package com.crud.crud.application.controller;
 import com.crud.crud.application.dto.AuthResponse;
 import com.crud.crud.application.dto.UserDto;
 import com.crud.crud.application.entity.User;
-import com.crud.crud.application.service.UserService;
+import com.crud.crud.application.service.AuthService;
 import com.crud.crud.application.util.JwtUtil;
 import com.crud.crud.application.util.UserValidation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    private AuthService authService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -42,7 +42,7 @@ public class AuthController {
         }
 
         // Attempt login
-        User user = userService.login(userDto);
+        User user = authService.login(userDto);
 
         if (user != null) {
             // Generate JWT token
@@ -78,14 +78,14 @@ public class AuthController {
         }
 
         // Check if username already exists
-        if (userService.existsByUsername(userDto.getUsername())) {
+        if (authService.existsByUsername(userDto.getUsername())) {
             response.put("success", false);
             response.put("message", "Username already exists");
             return ResponseEntity.badRequest().body(response);
         }
 
         // Create new user
-        User newUser = userService.createUser(userDto);
+        User newUser = authService.createUser(userDto);
         response.put("success", true);
         response.put("message", "User registered successfully");
         response.put("user", UserDto.fromEntity(newUser));
@@ -96,7 +96,7 @@ public class AuthController {
     @GetMapping("/check-username/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
         Map<String, Object> response = new HashMap<>();
-        boolean exists = userService.existsByUsername(username);
+        boolean exists = authService.existsByUsername(username);
 
         response.put("exists", exists);
         response.put("available", !exists);

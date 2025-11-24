@@ -11,15 +11,11 @@ import com.crud.crud.application.repository.ProductRepository;
 
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
+    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-    }
-
-    public ProductService() {
-        // Default constructor
     }
 
     /**
@@ -92,5 +88,26 @@ public class ProductService {
      */
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    /**
+     * Search products by keyword (name or category)
+     */
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.searchByKeyword(keyword);
+    }
+
+    /**
+     * Search products by name only
+     */
+    public List<Product> searchByName(String name) {
+        return productRepository.findByProductNameContainingIgnoreCase(name);
+    }
+
+    /**
+     * Search products by category only
+     */
+    public List<Product> searchByCategory(String category) {
+        return productRepository.findByCategoryContainingIgnoreCase(category);
     }
 }

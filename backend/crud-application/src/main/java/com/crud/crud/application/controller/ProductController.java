@@ -47,4 +47,28 @@ public class ProductController {
         boolean deleted = productService.deleteProduct(id);
         return deleted ? ResponseEntity.ok("Product deleted successfully") : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/products/search")
+    @CrossOrigin("http://localhost:3000")
+    ResponseEntity<List<Product>> searchProducts(@RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
+        List<Product> products;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Search by keyword (searches both name and category)
+            products = productService.searchProducts(keyword);
+        } else if (name != null && !name.trim().isEmpty()) {
+            // Search by name only
+            products = productService.searchByName(name);
+        } else if (category != null && !category.trim().isEmpty()) {
+            // Search by category only
+            products = productService.searchByCategory(category);
+        } else {
+            // No search params, return all products
+            products = productService.getAllProducts();
+        }
+
+        return ResponseEntity.ok(products);
+    }
 }

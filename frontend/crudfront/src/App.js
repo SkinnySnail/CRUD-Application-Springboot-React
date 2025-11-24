@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AddProduct from "./product/AddProduct";
 import EditProduct from "./product/EditProduct";
 import ViewProduct from "./product/ViewProduct";
+import SearchProduct from "./product/SearchProduct";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route exact path="/addproduct" element={<AddProduct />} />
           <Route exact path="/editproduct/:id" element={<EditProduct />} />
           <Route exact path="/viewproduct/:id" element={<ViewProduct />} />
+          <Route exact path="/searchproduct" element={<SearchProduct />} />
         </Routes>
       </Router>
     </div>

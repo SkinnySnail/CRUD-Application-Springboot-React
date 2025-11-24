@@ -7,6 +7,9 @@ export default function Home() {
   useAuth(); // Check authentication
 
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [searchType, setSearchType] = useState('keyword');
+  const [searchValue, setSearchValue] = useState('');
 
   const { id } = useParams();
 
@@ -17,6 +20,35 @@ export default function Home() {
   const loadProducts = async () => {
     const result = await axiosInstance.get("/products");
     setProducts(result.data);
+    setAllProducts(result.data);
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    if (!searchValue.trim()) {
+      setProducts(allProducts);
+      return;
+    }
+
+    try {
+      const params = {};
+      params[searchType] = searchValue.trim();
+
+      const result = await axiosInstance.get('/products/search', {
+        params: params
+      });
+
+      setProducts(result.data);
+    } catch (error) {
+      console.error('Error searching products:', error);
+      alert('Failed to search products. Please try again.');
+    }
+  };
+
+  const handleClear = () => {
+    setSearchValue('');
+    setProducts(allProducts);
   };
 
   const deleteProduct = async (id) => {
@@ -27,6 +59,53 @@ export default function Home() {
   return (
     <div className="container">
       <div className="py-4">
+        {/* Search Bar */}
+        <div className="card mb-4">
+          <div className="card-body">
+            <form onSubmit={handleSearch}>
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <label htmlFor="searchType" className="form-label">Search By</label>
+                  <select
+                    className="form-select"
+                    id="searchType"
+                    value={searchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                  >
+                    <option value="keyword">Keyword (Name or Category)</option>
+                    <option value="name">Product Name</option>
+                    <option value="category">Category</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="searchValue" className="form-label">Search</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="searchValue"
+                    placeholder="Enter search term..."
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-3 d-flex align-items-end">
+                  <button type="submit" className="btn btn-primary me-2">
+                    Search
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={handleClear}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Products Table */}
         <table className="table border shadow">
           <thead>
             <tr>

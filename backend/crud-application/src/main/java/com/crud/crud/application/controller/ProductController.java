@@ -21,9 +21,9 @@ import com.crud.crud.application.service.ProductService;
 @RestController
 @CrossOrigin("http://localhost:3000")
 public class ProductController {
-    private final ProductService productService;
-
     @Autowired
+    private ProductService productService;
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }

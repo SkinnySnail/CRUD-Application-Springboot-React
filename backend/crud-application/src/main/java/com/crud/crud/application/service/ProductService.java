@@ -11,11 +11,15 @@ import com.crud.crud.application.repository.ProductRepository;
 
 @Service
 public class ProductService {
-    private final ProductRepository productRepository;
-
     @Autowired
+    private ProductRepository productRepository;
+
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
+    }
+
+    public ProductService() {
+        // Default constructor
     }
 
     /**
@@ -91,23 +95,41 @@ public class ProductService {
     }
 
     /**
-     * Search products by keyword (name or category)
+     * Search products by keyword (searches in name and category)
+     * 
+     * @param keyword search keyword
+     * @return list of matching products
      */
     public List<Product> searchProducts(String keyword) {
-        return productRepository.searchByKeyword(keyword);
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.searchByKeyword(keyword.trim());
     }
 
     /**
-     * Search products by name only
+     * Search products by name
+     * 
+     * @param name product name
+     * @return list of matching products
      */
     public List<Product> searchByName(String name) {
-        return productRepository.findByProductNameContainingIgnoreCase(name);
+        if (name == null || name.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByProductNameContainingIgnoreCase(name.trim());
     }
 
     /**
-     * Search products by category only
+     * Search products by category
+     * 
+     * @param category category name
+     * @return list of matching products
      */
     public List<Product> searchByCategory(String category) {
-        return productRepository.findByCategoryContainingIgnoreCase(category);
+        if (category == null || category.trim().isEmpty()) {
+            return getAllProducts();
+        }
+        return productRepository.findByCategoryContainingIgnoreCase(category.trim());
     }
 }

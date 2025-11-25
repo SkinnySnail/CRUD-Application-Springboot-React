@@ -6,25 +6,24 @@ This project is a simple CRUD (Create, Read, Update, Delete) application built w
 
 => Table of Contents
 
-* Getting Started
-* Prerequisites
-* Installation
-* Running the Application
-* Usage
-* Project Structure
-* Technologies Used
-* Contributing
-* License
+- Getting Started
+- Prerequisites
+- Installation
+- Running the Application
+- Usage
+- Project Structure
+- Technologies Used
+- Contributing
+- License
 
 =>Getting Started
 
+- Node.js and npm installed.
+- Java and Maven for Spring Boot.
+- A compatible database (e.g., MySQL, PostgreSQL) with schema created.
 
-* Node.js and npm installed.
-* Java and Maven for Spring Boot.
-* A compatible database (e.g., MySQL, PostgreSQL) with schema created.
-  
 => Installation
- 
+
 -> Clone the repository:
 
 git clone https://github.com/your-username/your-crud-app.git
@@ -36,8 +35,8 @@ npm install
 
 -> Configure the backend:
 
-* Create a application.properties file in the src/main/resources directory of the Spring Boot project.
-* Configure your database connection in application.properties. For example:
+- Create a application.properties file in the src/main/resources directory of the Spring Boot project.
+- Configure your database connection in application.properties. For example:
 
 -> properties
 
@@ -83,13 +82,13 @@ database/: Contains database schema and migration scripts.
 
 => Technologies Used
 
-* React
-* Spring Boot
-* Java
-* MySQL (or your preferred database)
-* npm
-* Maven
-  
+- React
+- Spring Boot
+- Java
+- MySQL (or your preferred database)
+- npm
+- Maven
+
 => Contributing
 
 Feel free to contribute to this project by opening issues or pull requests. Your contributions are welcome!
@@ -99,7 +98,3 @@ Feel free to contribute to this project by opening issues or pull requests. Your
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Feel free to customize this README file to include specific details about your CRUD application, such as project features, API documentation, or any other relevant information. It's essential to provide clear and concise instructions to help users understand and use your application effectively.
-
-
-
-

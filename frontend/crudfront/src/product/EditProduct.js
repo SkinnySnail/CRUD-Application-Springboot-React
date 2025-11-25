@@ -52,7 +52,7 @@ export default function EditProduct() {
 
           <form onSubmit={(e) => onSubmit(e)}>
             <div className="mb-3">
-              <label htmlFor="name" className="form-label">
+              <label htmlFor="ProductName" className="form-label">
                 Product Name
               </label>
               <input

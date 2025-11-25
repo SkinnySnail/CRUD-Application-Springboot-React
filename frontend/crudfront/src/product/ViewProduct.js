@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 
 export default function ViewProduct() {
   const [product, setProduct] = useState({
-    productName: "",
+    name: "",
     price: "",
     quantity: "",
     description: "",
@@ -33,7 +33,7 @@ export default function ViewProduct() {
               Details of product id : {product.id}
               <ul className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <b>Product Name:</b> {product.productName}
+                  <b>Product Name:</b> {product.name}
                 </li>
                 <li className="list-group-item">
                   <b>Price:</b> {product.price}

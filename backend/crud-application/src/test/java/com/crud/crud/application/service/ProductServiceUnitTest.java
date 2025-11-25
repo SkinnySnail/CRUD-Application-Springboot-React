@@ -52,10 +52,10 @@ class ProductServiceUnitTest {
                                 .thenReturn(product);
 
                 // Act
-                Product result = productService.createProduct(productDto);
+                ProductDto result = productService.createProduct(productDto);
                 // Assert
                 assertNotNull(result);
-                assertEquals("Laptop", result.getProductName());
+                assertEquals("Laptop", result.getName());
                 assertEquals(15000000.0, result.getPrice());
                 assertEquals(10, result.getQuantity());
                 assertEquals("Electronics", result.getCategory());
@@ -74,12 +74,12 @@ class ProductServiceUnitTest {
                                 .thenReturn(Optional.of(product));
 
                 // Act
-                Product result = productService.getProductById(productId);
+                ProductDto result = productService.getProductById(productId);
 
                 // Assert
                 assertNotNull(result);
                 assertEquals(productId, result.getId());
-                assertEquals("Laptop", result.getProductName());
+                assertEquals("Laptop", result.getName());
                 verify(productRepository, times(1)).findById(productId);
         }
 
@@ -93,7 +93,7 @@ class ProductServiceUnitTest {
                                 .thenReturn(Optional.empty());
 
                 // Act
-                Product result = productService.getProductById(productId);
+                ProductDto result = productService.getProductById(productId);
 
                 // Assert
                 assertNull(result);
@@ -120,11 +120,11 @@ class ProductServiceUnitTest {
                                 .thenReturn(updatedProduct);
 
                 // Act
-                Product result = productService.updateProduct(productId, updateDto);
+                ProductDto result = productService.updateProduct(productId, updateDto);
 
                 // Assert
                 assertNotNull(result);
-                assertEquals("Laptop Updated", result.getProductName());
+                assertEquals("Laptop Updated", result.getName());
                 assertEquals(14000000.0, result.getPrice());
                 assertEquals(15, result.getQuantity());
                 verify(productRepository, times(1)).findById(productId);
@@ -143,7 +143,7 @@ class ProductServiceUnitTest {
                                 .thenReturn(Optional.empty());
 
                 // Act
-                Product result = productService.updateProduct(productId, updateDto);
+                ProductDto result = productService.updateProduct(productId, updateDto);
 
                 // Assert
                 assertNull(result);
@@ -202,13 +202,13 @@ class ProductServiceUnitTest {
                                 .thenReturn(products);
 
                 // Act
-                List<Product> result = productService.getAllProducts();
+                List<ProductDto> result = productService.getAllProducts();
 
                 // Assert
                 assertNotNull(result);
                 assertEquals(2, result.size());
-                assertEquals("Laptop", result.get(0).getProductName());
-                assertEquals("Mouse", result.get(1).getProductName());
+                assertEquals("Laptop", result.get(0).getName());
+                assertEquals("Mouse", result.get(1).getName());
                 verify(productRepository, times(1)).findAll();
         }
 
@@ -247,12 +247,12 @@ class ProductServiceUnitTest {
                                 .thenReturn(existingProduct);
 
                 // Act
-                Product result = productService.updateProduct(productId, updateDto);
+                ProductDto result = productService.updateProduct(productId, updateDto);
 
                 // Assert
                 assertNotNull(result);
                 // Values should remain unchanged
-                assertEquals("Laptop", result.getProductName());
+                assertEquals("Laptop", result.getName());
                 assertEquals(15000000.0, result.getPrice());
                 assertEquals(10, result.getQuantity());
                 assertEquals("Electronics", result.getCategory());

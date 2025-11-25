@@ -122,7 +122,7 @@ export default function Home() {
             {products.map((product, index) => (
               <tr key={index}>
                 <th scope="row">{product.id}</th>
-                <td>{product.productName}</td>
+                <td>{product.name}</td>
                 <td>{product.price}</td>
                 <td>{product.quantity}</td>
                 <td>{product.description}</td>

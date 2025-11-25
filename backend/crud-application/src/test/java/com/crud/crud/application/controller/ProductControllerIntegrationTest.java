@@ -2,7 +2,6 @@ package com.crud.crud.application.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.crud.crud.application.dto.ProductDto;
-import com.crud.crud.application.entity.Product;
 import com.crud.crud.application.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,42 +43,45 @@ class ProductControllerIntegrationTest {
     @DisplayName("TC_INTER_2: POST /product - Tạo sản phẩm mới")
     void testCreateProduct() throws Exception {
         ProductDto requestDto = new ProductDto("Laptop", 15000000.0, 10, "Electronics");
-        Product responseProduct = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
-        when(productService.createProduct(any(ProductDto.class))).thenReturn(responseProduct);
+        ProductDto responseDto = new ProductDto("Laptop", 15000000.0, 10, "Electronics");
+        responseDto.setId(1L);
+        when(productService.createProduct(any(ProductDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(post("/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.productName").value("Laptop"));
+                .andExpect(jsonPath("$.name").value("Laptop"));
     }
 
     @Test
     @DisplayName("TC_INTER_3: GET /product/{id} - Lấy sản phẩm theo ID")
     void testGetProductById() throws Exception {
-        Product product = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
-        when(productService.getProductById(1L)).thenReturn(product);
+        ProductDto productDto = new ProductDto("Laptop", 15000000.0, 10, "Electronics");
+        productDto.setId(1L);
+        when(productService.getProductById(1L)).thenReturn(productDto);
 
         mockMvc.perform(get("/product/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.productName").value("Laptop"));
+                .andExpect(jsonPath("$.name").value("Laptop"));
     }
 
     @Test
     @DisplayName("TC_INTER_4: PUT /product/{id} - Cập nhật sản phẩm")
     void testUpdateProduct() throws Exception {
         ProductDto updateDto = new ProductDto("Laptop Updated", 14000000.0, 15, "Electronics");
-        Product responseProduct = new Product(1L, "Laptop Updated", 14000000.0, 15, "Electronics");
-        when(productService.updateProduct(eq(1L), any(ProductDto.class))).thenReturn(responseProduct);
+        ProductDto responseDto = new ProductDto("Laptop Updated", 14000000.0, 15, "Electronics");
+        responseDto.setId(1L);
+        when(productService.updateProduct(eq(1L), any(ProductDto.class))).thenReturn(responseDto);
 
         mockMvc.perform(put("/product/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.productName").value("Laptop Updated"));
+                .andExpect(jsonPath("$.name").value("Laptop Updated"));
     }
 
     @Test

@@ -28,9 +28,10 @@ public class ProductService {
      * @param productDto product data to create
      * @return created product with ID
      */
-    public Product createProduct(ProductDto productDto) {
+    public ProductDto createProduct(ProductDto productDto) {
         Product product = productDto.toEntity();
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        return ProductDto.fromEntity(savedProduct);
     }
 
     /**
@@ -39,8 +40,10 @@ public class ProductService {
      * @param id product ID
      * @return product data or null if not found
      */
-    public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+    public ProductDto getProductById(Long id) {
+        return productRepository.findById(id)
+                .map(ProductDto::fromEntity)
+                .orElse(null);
     }
 
     /**
@@ -50,7 +53,7 @@ public class ProductService {
      * @param productDto new product data
      * @return updated product
      */
-    public Product updateProduct(Long id, ProductDto productDto) {
+    public ProductDto updateProduct(Long id, ProductDto productDto) {
         return productRepository.findById(id).map(existingProduct -> {
             if (productDto.getName() != null && !productDto.getName().trim().isEmpty()) {
                 existingProduct.setProductName(productDto.getName());
@@ -67,7 +70,8 @@ public class ProductService {
             if (productDto.getDescription() != null) {
                 existingProduct.setDescription(productDto.getDescription());
             }
-            return productRepository.save(existingProduct);
+            Product savedProduct = productRepository.save(existingProduct);
+            return ProductDto.fromEntity(savedProduct);
         }).orElse(null);
     }
 
@@ -90,8 +94,10 @@ public class ProductService {
      * 
      * @return list of all products
      */
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(ProductDto::fromEntity)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -100,11 +106,13 @@ public class ProductService {
      * @param keyword search keyword
      * @return list of matching products
      */
-    public List<Product> searchProducts(String keyword) {
+    public List<ProductDto> searchProducts(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             return getAllProducts();
         }
-        return productRepository.searchByKeyword(keyword.trim());
+        return productRepository.searchByKeyword(keyword.trim()).stream()
+                .map(ProductDto::fromEntity)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -113,11 +121,13 @@ public class ProductService {
      * @param name product name
      * @return list of matching products
      */
-    public List<Product> searchByName(String name) {
+    public List<ProductDto> searchByName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return getAllProducts();
         }
-        return productRepository.findByProductNameContainingIgnoreCase(name.trim());
+        return productRepository.findByProductNameContainingIgnoreCase(name.trim()).stream()
+                .map(ProductDto::fromEntity)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -126,10 +136,12 @@ public class ProductService {
      * @param category category name
      * @return list of matching products
      */
-    public List<Product> searchByCategory(String category) {
+    public List<ProductDto> searchByCategory(String category) {
         if (category == null || category.trim().isEmpty()) {
             return getAllProducts();
         }
-        return productRepository.findByCategoryContainingIgnoreCase(category.trim());
+        return productRepository.findByCategoryContainingIgnoreCase(category.trim()).stream()
+                .map(ProductDto::fromEntity)
+                .collect(java.util.stream.Collectors.toList());
     }
 }

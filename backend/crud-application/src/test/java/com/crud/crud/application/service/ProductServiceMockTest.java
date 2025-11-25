@@ -57,12 +57,12 @@ class ProductServiceMockTest {
         when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
 
         // Act
-        Product result = productService.getProductById(productId);
+        ProductDto result = productService.getProductById(productId);
 
         // Assert
         assertNotNull(result);
         assertEquals(productId, result.getId());
-        assertEquals("Laptop", result.getProductName());
+        assertEquals("Laptop", result.getName());
         assertEquals(15000000.0, result.getPrice());
         assertEquals(10, result.getQuantity());
 
@@ -78,7 +78,7 @@ class ProductServiceMockTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Act
-        Product result = productService.getProductById(productId);
+        ProductDto result = productService.getProductById(productId);
 
         // Assert
         assertNull(result);
@@ -96,12 +96,12 @@ class ProductServiceMockTest {
         when(productRepository.save(any(Product.class))).thenReturn(savedProduct);
 
         // Act
-        Product result = productService.createProduct(productDto);
+        ProductDto result = productService.createProduct(productDto);
 
         // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertEquals("Mouse", result.getProductName());
+        assertEquals("Mouse", result.getName());
         assertEquals(200000.0, result.getPrice());
 
         // Verify repository interactions
@@ -121,11 +121,11 @@ class ProductServiceMockTest {
         when(productRepository.save(any(Product.class))).thenReturn(updatedProduct);
 
         // Act
-        Product result = productService.updateProduct(productId, updateDto);
+        ProductDto result = productService.updateProduct(productId, updateDto);
 
         // Assert
         assertNotNull(result);
-        assertEquals("Laptop Updated", result.getProductName());
+        assertEquals("Laptop Updated", result.getName());
         assertEquals(14000000.0, result.getPrice());
         assertEquals(15, result.getQuantity());
 
@@ -143,7 +143,7 @@ class ProductServiceMockTest {
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
         // Act
-        Product result = productService.updateProduct(productId, updateDto);
+        ProductDto result = productService.updateProduct(productId, updateDto);
 
         // Assert
         assertNull(result);
@@ -201,14 +201,14 @@ class ProductServiceMockTest {
         when(productRepository.findAll()).thenReturn(mockProducts);
 
         // Act
-        List<Product> result = productService.getAllProducts();
+        List<ProductDto> result = productService.getAllProducts();
 
         // Assert
         assertNotNull(result);
         assertEquals(3, result.size());
-        assertEquals("Laptop", result.get(0).getProductName());
-        assertEquals("Mouse", result.get(1).getProductName());
-        assertEquals("Keyboard", result.get(2).getProductName());
+        assertEquals("Laptop", result.get(0).getName());
+        assertEquals("Mouse", result.get(1).getName());
+        assertEquals("Keyboard", result.get(2).getName());
 
         // Verify repository interactions
         verify(productRepository, times(1)).findAll();
@@ -221,7 +221,7 @@ class ProductServiceMockTest {
         when(productRepository.findAll()).thenReturn(Arrays.asList());
 
         // Act
-        List<Product> result = productService.getAllProducts();
+        List<ProductDto> result = productService.getAllProducts();
 
         // Assert
         assertNotNull(result);
@@ -244,11 +244,11 @@ class ProductServiceMockTest {
         when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
-        Product result = productService.updateProduct(productId, updateDto);
+        ProductDto result = productService.updateProduct(productId, updateDto);
 
         // Assert
         assertNotNull(result);
-        assertEquals("Laptop", result.getProductName()); // Tên không đổi
+        assertEquals("Laptop", result.getName()); // Tên không đổi
         assertEquals(12000000.0, result.getPrice()); // Giá đã thay đổi
         assertEquals(10, result.getQuantity()); // Số lượng không đổi
 

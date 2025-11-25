@@ -31,7 +31,7 @@ export default function EditProduct() {
 
     const errors = validateProduct(product);
     if (Object.keys(errors).length > 0) {
-      alert(JSON.stringify(errors));
+      alert("Validation failed: " + JSON.stringify(errors));
       return;
     }
 

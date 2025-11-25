@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { validateProduct } from "../util/productValidation";
+import { validateProduct, VALID_CATEGORIES } from "../util/productValidation";
 
 export default function EditProduct() {
   let navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function EditProduct() {
 
           <form onSubmit={(e) => onSubmit(e)}>
             <div className="mb-3">
-              <label htmlFor="ProductName" className="form-label">
+              <label htmlFor="name" className="form-label">
                 Product Name
               </label>
               <input
@@ -106,14 +106,19 @@ export default function EditProduct() {
               <label htmlFor="Category" className="form-label">
                 Category
               </label>
-              <input
-                type="text"
+              <select
                 className="form-control"
-                placeholder="Enter category"
                 name="category"
                 value={category}
                 onChange={(e) => onInputChange(e)}
-              />
+              >
+                <option value="">Select a category</option>
+                {VALID_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn btn-outline-primary">
               Submit

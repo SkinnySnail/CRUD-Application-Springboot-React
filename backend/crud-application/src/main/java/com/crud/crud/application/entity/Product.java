@@ -29,7 +29,8 @@ public class Product {
     @NotBlank
     private String category;
 
-    private static final List<String> VALID_CATEGORIES = List.of("Electronics", "Books", "Clothing", "Home", "Toys");
+    private static final List<String> VALID_CATEGORIES = List.of("Electronics", "Books", "Clothing", "Home", "Toys",
+            "Food");
 
     public Product(Long id, @NotBlank @Size(min = 3, max = 100) String productName,
             @DecimalMin(value = "0.01", inclusive = true) @DecimalMax(value = "999999999", inclusive = true) Double price,

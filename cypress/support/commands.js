@@ -29,7 +29,9 @@ Cypress.Commands.add('tab', { prevSubject: 'element' }, (subject) => {
 Cypress.Commands.add('clearAuth', () => {
     cy.clearLocalStorage()
     cy.clearCookies()
-    cy.clearSessionStorage()
+    cy.window().then((win) => {
+        win.sessionStorage.clear()
+    })
 })
 
 // Mock successful login response
@@ -71,4 +73,72 @@ Cypress.Commands.add('checkValidationState', (inputSelector, errorSelector, isVa
         cy.get(inputSelector).should('have.class', 'error')
         cy.get(errorSelector).should('be.visible')
     }
+})
+
+// Product CRUD Commands
+Cypress.Commands.add('navigateToAddProduct', () => {
+    cy.contains('a', 'Add product').click()
+    cy.url().should('include', '/addproduct')
+    cy.contains('Register Product').should('be.visible')
+})
+
+Cypress.Commands.add('fillProductForm', (product) => {
+    if (product.name) cy.get('input[name="name"]').type(product.name)
+    if (product.price) cy.get('input[name="price"]').type(product.price)
+    if (product.quantity) cy.get('input[name="quantity"]').type(product.quantity)
+    if (product.description) cy.get('textarea[name="description"]').type(product.description)
+    if (product.category) cy.get('select[name="category"]').select(product.category)
+})
+
+Cypress.Commands.add('submitProductForm', () => {
+    cy.contains('button', 'Submit').click()
+})
+
+Cypress.Commands.add('createProduct', (product) => {
+    cy.navigateToAddProduct()
+    cy.fillProductForm(product)
+    cy.submitProductForm()
+    cy.url().should('eq', 'http://localhost:3000/', { timeout: 10000 })
+})
+
+Cypress.Commands.add('editFirstProduct', () => {
+    cy.get('tbody tr').first().within(() => {
+        cy.contains('a', 'Edit').click()
+    })
+    cy.url().should('include', '/editproduct/')
+    cy.contains('Edit Product').should('be.visible')
+})
+
+Cypress.Commands.add('viewFirstProduct', () => {
+    cy.get('tbody tr').first().within(() => {
+        cy.contains('a', 'View').click()
+    })
+    cy.url().should('include', '/viewproduct/')
+})
+
+Cypress.Commands.add('deleteProduct', (productName) => {
+    cy.contains('td', productName).parents('tr').within(() => {
+        cy.contains('button', 'Delete').click()
+    })
+    cy.wait(1000)
+})
+
+Cypress.Commands.add('searchProducts', (searchType, searchValue) => {
+    if (searchType) cy.get('select[id="searchType"]').select(searchType)
+    cy.get('input[id="searchValue"]').type(searchValue)
+    cy.contains('button', 'Search').click()
+    cy.wait(500)
+})
+
+Cypress.Commands.add('clearSearch', () => {
+    cy.contains('button', 'Clear').click()
+    cy.wait(500)
+})
+
+Cypress.Commands.add('verifyProductInList', (productName) => {
+    cy.contains('td', productName).should('be.visible')
+})
+
+Cypress.Commands.add('verifyProductNotInList', (productName) => {
+    cy.contains('td', productName).should('not.exist')
 })

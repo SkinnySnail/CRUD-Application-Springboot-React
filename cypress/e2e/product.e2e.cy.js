@@ -4,9 +4,12 @@
  * Plus Search/Filter functionality
  */
 
+import ProductPage from '../support/pages/ProductPage';
+
 describe('Product CRUD Operations E2E Tests', () => {
   const baseUrl = 'http://localhost:3000';
   const timestamp = Date.now();
+  const productPage = new ProductPage();
   const testProduct = {
     name: `Test Laptop ${timestamp}`,
     price: '25000',
@@ -32,47 +35,31 @@ describe('Product CRUD Operations E2E Tests', () => {
       cy.get('tbody tr').should('have.length.at.least', 1);
 
       // Verify all table headers exist
-      cy.contains('th', 'ID').should('be.visible');
-      cy.contains('th', 'Product Name').should('be.visible');
-      cy.contains('th', 'Price').should('be.visible');
-      cy.contains('th', 'Quantity').should('be.visible');
-      cy.contains('th', 'Description').should('be.visible');
-      cy.contains('th', 'Category').should('be.visible');
-      cy.contains('th', 'Actions').should('be.visible');
+      productPage.verifyTableHeaders();
     });
 
     it('TC_READ_02: Should view product details', () => {
       // Click View button on first product
-      cy.get('tbody tr').first().within(() => {
-        cy.contains('a', 'View').click();
-      });
+      productPage.clickViewOnFirstProduct();
 
       // Verify navigation to view page
       cy.url().should('include', '/viewproduct/');
 
       // Verify product details are displayed
-      cy.contains('Product Details').should('be.visible');
-      cy.get('.card').should('be.visible');
-      cy.contains('Details of product id').should('be.visible');
+      productPage.verifyProductDetailsPage();
 
       // Check if product information fields are present
-      cy.contains('Product Name:').should('be.visible');
-      cy.contains('Price:').should('be.visible');
-      cy.contains('Quantity:').should('be.visible');
-      cy.contains('Description:').should('be.visible');
-      cy.contains('Category:').should('be.visible');
+      productPage.verifyProductFields();
     });
 
     it('TC_READ_03: Should navigate back to home from product details', () => {
       // Go to view page
-      cy.get('tbody tr').first().within(() => {
-        cy.contains('a', 'View').click();
-      });
+      productPage.clickViewOnFirstProduct();
 
       cy.url().should('include', '/viewproduct/');
 
       // Click Back button
-      cy.contains('a', 'Back to Home').click();
+      productPage.clickBackToHome();
 
       // Verify back to homepage
       cy.url().should('eq', `${baseUrl}/`);
@@ -84,32 +71,26 @@ describe('Product CRUD Operations E2E Tests', () => {
   describe('Create Product Tests', () => {
     beforeEach(() => {
       // Navigate to Add Product page via navbar
-      cy.contains('a', 'Add product').click();
-      cy.url().should('include', '/addproduct');
-      cy.contains('Register Product').should('be.visible');
+      cy.navigateToAddProduct();
     });
 
     it('TC_CREATE_01: Should create a new product successfully', () => {
       // Fill in all product fields
-      cy.get('input[name="name"]').type(testProduct.name);
-      cy.get('input[name="price"]').type(testProduct.price);
-      cy.get('input[name="quantity"]').type(testProduct.quantity);
-      cy.get('textarea[name="description"]').type(testProduct.description);
-      cy.get('select[name="category"]').select(testProduct.category);
+      cy.fillProductForm(testProduct);
 
       // Submit form
-      cy.contains('button', 'Submit').click();
+      cy.submitProductForm();
 
       // Verify navigation back to home
       cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
 
       // Verify product appears in list
-      cy.contains('td', testProduct.name).should('be.visible');
+      cy.verifyProductInList(testProduct.name);
     });
 
     it('TC_CREATE_02: Should show validation error for empty required fields', () => {
       // Try to submit empty form
-      cy.contains('button', 'Submit').click();
+      cy.submitProductForm();
 
       // Should still be on add product page due to HTML5 validation or alert
       cy.url().should('include', '/addproduct');
@@ -137,7 +118,7 @@ describe('Product CRUD Operations E2E Tests', () => {
       cy.get('input[name="name"]').type('Test Product to Cancel');
 
       // Click Cancel
-      cy.contains('a', 'Cancel').click();
+      productPage.clickCancel();
 
       // Verify back to home
       cy.url().should('eq', `${baseUrl}/`);
@@ -153,17 +134,12 @@ describe('Product CRUD Operations E2E Tests', () => {
         category: 'Clothing'
       };
 
-      cy.get('input[name="name"]').type(fullProduct.name);
-      cy.get('input[name="price"]').type(fullProduct.price);
-      cy.get('input[name="quantity"]').type(fullProduct.quantity);
-      cy.get('textarea[name="description"]').type(fullProduct.description);
-      cy.get('select[name="category"]').select(fullProduct.category);
-
-      cy.contains('button', 'Submit').click();
+      cy.fillProductForm(fullProduct);
+      cy.submitProductForm();
 
       // Verify success
       cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
-      cy.contains('td', fullProduct.name).should('be.visible');
+      cy.verifyProductInList(fullProduct.name);
     });
   });
 
@@ -171,12 +147,7 @@ describe('Product CRUD Operations E2E Tests', () => {
   describe('Update Product Tests', () => {
     beforeEach(() => {
       // Navigate to edit page for first product
-      cy.get('tbody tr').first().within(() => {
-        cy.contains('a', 'Edit').click();
-      });
-
-      cy.url().should('include', '/editproduct/');
-      cy.contains('Edit Product').should('be.visible');
+      cy.editFirstProduct();
     });
 
     it('TC_UPDATE_01: Should update product successfully', () => {
@@ -185,17 +156,17 @@ describe('Product CRUD Operations E2E Tests', () => {
       const updatedPrice = '35000';
 
       // Clear and update fields
-      cy.get('input[name="name"]').clear().type(updatedName);
-      cy.get('input[name="price"]').clear().type(updatedPrice);
+      productPage.clearAndFillField('name', updatedName);
+      productPage.clearAndFillField('price', updatedPrice);
 
       // Submit update
-      cy.contains('button', 'Submit').click();
+      cy.submitProductForm();
 
       // Verify navigation back to home
       cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
 
       // Verify updated product appears in list
-      cy.contains('td', updatedName).should('be.visible');
+      cy.verifyProductInList(updatedName);
     });
 
     it('TC_UPDATE_02: Should pre-fill form with existing product data', () => {
@@ -265,7 +236,7 @@ describe('Product CRUD Operations E2E Tests', () => {
       cy.get('input[name="name"]').clear().type('Changed Name But Cancel');
 
       // Click Cancel
-      cy.contains('a', 'Cancel').click();
+      productPage.clickCancel();
 
       // Verify back to home
       cy.url().should('eq', `${baseUrl}/`);
@@ -307,14 +278,7 @@ describe('Product CRUD Operations E2E Tests', () => {
       };
 
       // Create test product via UI
-      cy.contains('a', 'Add product').click();
-      cy.get('input[name="name"]').type(deleteTestProduct.name);
-      cy.get('input[name="price"]').type(deleteTestProduct.price);
-      cy.get('input[name="quantity"]').type(deleteTestProduct.quantity);
-      cy.get('textarea[name="description"]').type(deleteTestProduct.description);
-      cy.get('select[name="category"]').select(deleteTestProduct.category);
-      cy.contains('button', 'Submit').click();
-      cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
+      cy.createProduct(deleteTestProduct);
 
       // Store product name for verification
       cy.wrap(deleteTestProduct.name).as('productToDelete');
@@ -322,16 +286,11 @@ describe('Product CRUD Operations E2E Tests', () => {
 
     it('TC_DELETE_01: Should delete product successfully', function () {
       // Find and delete the test product
-      cy.contains('td', this.productToDelete).should('be.visible');
-      cy.contains('td', this.productToDelete).parents('tr').within(() => {
-        cy.contains('button', 'Delete').click();
-      });
-
-      // Wait for deletion to complete
-      cy.wait(1000);
+      cy.verifyProductInList(this.productToDelete);
+      cy.deleteProduct(this.productToDelete);
 
       // Verify product is removed from list
-      cy.contains('td', this.productToDelete).should('not.exist');
+      cy.verifyProductNotInList(this.productToDelete);
     });
 
     it('TC_DELETE_02: Should reduce product count after deletion', function () {
@@ -340,12 +299,9 @@ describe('Product CRUD Operations E2E Tests', () => {
         const initialCount = $rows.length;
 
         // Delete the product
-        cy.contains('td', this.productToDelete).parents('tr').within(() => {
-          cy.contains('button', 'Delete').click();
-        });
+        cy.deleteProduct(this.productToDelete);
 
-        // Wait and verify count decreased
-        cy.wait(1000);
+        // Verify count decreased
         cy.get('tbody tr').should('have.length', initialCount - 1);
       });
     });
@@ -354,11 +310,7 @@ describe('Product CRUD Operations E2E Tests', () => {
       // Get second product info before deletion
       cy.get('tbody tr').eq(1).find('td').first().invoke('text').then(secondProductName => {
         // Delete first test product
-        cy.contains('td', this.productToDelete).parents('tr').within(() => {
-          cy.contains('button', 'Delete').click();
-        });
-
-        cy.wait(1000);
+        cy.deleteProduct(this.productToDelete);
 
         // Verify second product still exists
         cy.contains('td', secondProductName).should('be.visible');
@@ -391,18 +343,12 @@ describe('Product CRUD Operations E2E Tests', () => {
     });
 
     it('TC_SEARCH_02: Should search by product name specifically', () => {
-      // Select "Product Name" search type
-      cy.get('select[id="searchType"]').select('name');
-
       // Get a product name
       cy.get('tbody tr').first().find('td').eq(0).invoke('text').then(productName => {
         const searchTerm = productName.trim().substring(0, 4);
 
         // Search
-        cy.get('input[id="searchValue"]').type(searchTerm);
-        cy.contains('button', 'Search').click();
-
-        cy.wait(500);
+        cy.searchProducts('name', searchTerm);
 
         // Verify results exist
         cy.get('tbody tr').should('have.length.at.least', 1);
@@ -410,14 +356,8 @@ describe('Product CRUD Operations E2E Tests', () => {
     });
 
     it('TC_SEARCH_03: Should search by category', () => {
-      // Select "Category" search type
-      cy.get('select[id="searchType"]').select('category');
-
       // Search for Electronics
-      cy.get('input[id="searchValue"]').type('Electronics');
-      cy.contains('button', 'Search').click();
-
-      cy.wait(500);
+      cy.searchProducts('category', 'Electronics');
 
       // If results exist, verify all have Electronics category
       cy.get('tbody tr').then($rows => {
@@ -433,13 +373,10 @@ describe('Product CRUD Operations E2E Tests', () => {
       // Get initial count
       cy.get('tbody tr').its('length').then(initialCount => {
         // Perform a search
-        cy.get('input[id="searchValue"]').type('TestSearch');
-        cy.contains('button', 'Search').click();
-        cy.wait(500);
+        cy.searchProducts(null, 'TestSearch');
 
         // Click Clear button
-        cy.contains('button', 'Clear').click();
-        cy.wait(500);
+        cy.clearSearch();
 
         // Verify all products are shown again
         cy.get('tbody tr').should('have.length', initialCount);
@@ -496,40 +433,30 @@ describe('Product CRUD Operations E2E Tests', () => {
       };
 
       // === CREATE ===
-      cy.contains('a', 'Add product').click();
-      cy.get('input[name="name"]').type(uniqueProduct.name);
-      cy.get('input[name="price"]').type(uniqueProduct.price);
-      cy.get('input[name="quantity"]').type(uniqueProduct.quantity);
-      cy.get('textarea[name="description"]').type(uniqueProduct.description);
-      cy.get('select[name="category"]').select(uniqueProduct.category);
-      cy.contains('button', 'Submit').click();
-      cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
+      cy.createProduct(uniqueProduct);
 
       // === READ/VIEW ===
-      cy.contains('td', uniqueProduct.name).should('be.visible');
+      cy.verifyProductInList(uniqueProduct.name);
       cy.contains('td', uniqueProduct.name).parents('tr').within(() => {
         cy.contains('a', 'View').click();
       });
       cy.contains('Product Details').should('be.visible');
       cy.contains(uniqueProduct.name).should('be.visible');
-      cy.contains('a', 'Back to Home').click();
+      productPage.clickBackToHome();
 
       // === UPDATE ===
       cy.contains('td', uniqueProduct.name).parents('tr').within(() => {
         cy.contains('a', 'Edit').click();
       });
       const updatedName = `${uniqueProduct.name}_UPDATED`;
-      cy.get('input[name="name"]').clear().type(updatedName);
-      cy.contains('button', 'Submit').click();
+      productPage.clearAndFillField('name', updatedName);
+      cy.submitProductForm();
       cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
-      cy.contains('td', updatedName).should('be.visible');
+      cy.verifyProductInList(updatedName);
 
       // === DELETE ===
-      cy.contains('td', updatedName).parents('tr').within(() => {
-        cy.contains('button', 'Delete').click();
-      });
-      cy.wait(1000);
-      cy.contains('td', updatedName).should('not.exist');
+      cy.deleteProduct(updatedName);
+      cy.verifyProductNotInList(updatedName);
     });
 
     it('TC_INTEGRATION_02: Should handle CRUD operations with search', () => {
@@ -543,29 +470,17 @@ describe('Product CRUD Operations E2E Tests', () => {
       };
 
       // Create product
-      cy.contains('a', 'Add product').click();
-      cy.get('input[name="name"]').type(searchTestProduct.name);
-      cy.get('input[name="price"]').type(searchTestProduct.price);
-      cy.get('input[name="quantity"]').type(searchTestProduct.quantity);
-      cy.get('textarea[name="description"]').type(searchTestProduct.description);
-      cy.get('select[name="category"]').select(searchTestProduct.category);
-      cy.contains('button', 'Submit').click();
-      cy.url().should('eq', `${baseUrl}/`, { timeout: 10000 });
+      cy.createProduct(searchTestProduct);
 
       // Search for the product
-      cy.get('input[id="searchValue"]').type(searchTestProduct.name);
-      cy.contains('button', 'Search').click();
-      cy.wait(500);
+      cy.searchProducts(null, searchTestProduct.name);
 
       // Should find exactly one result
       cy.get('tbody tr').should('have.length', 1);
-      cy.contains('td', searchTestProduct.name).should('be.visible');
+      cy.verifyProductInList(searchTestProduct.name);
 
       // Delete from search results
-      cy.contains('td', searchTestProduct.name).parents('tr').within(() => {
-        cy.contains('button', 'Delete').click();
-      });
-      cy.wait(1000);
+      cy.deleteProduct(searchTestProduct.name);
 
       // Search for the product again
       cy.get('input[id="searchValue"]').type(searchTestProduct.name);

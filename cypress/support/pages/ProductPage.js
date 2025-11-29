@@ -15,8 +15,11 @@ class ProductPage {
         if (product.category) cy.get('select[name="category"]').select(product.category);
     }
 
-    clearAndFillField(selector, value) {
-        cy.get(selector).clear().type(value);
+    clearAndFillField(fieldName, value) {
+        // Support both full selector and field name
+        const selector = fieldName.includes('[') ? fieldName : `input[name="${fieldName}"], textarea[name="${fieldName}"], select[name="${fieldName}"]`;
+        // Wait for element to be visible before interacting
+        cy.get(selector).should('be.visible').clear().type(value);
     }
 
     submitForm() {

@@ -155,6 +155,9 @@ describe('Product CRUD Operations E2E Tests', () => {
       const updatedName = `Updated Product ${timestamp}`;
       const updatedPrice = '35000';
 
+      // Wait for edit form to be ready
+      productPage.verifyEditForm();
+      
       // Clear and update fields
       productPage.clearAndFillField('name', updatedName);
       productPage.clearAndFillField('price', updatedPrice);
@@ -448,6 +451,8 @@ describe('Product CRUD Operations E2E Tests', () => {
       cy.contains('td', uniqueProduct.name).parents('tr').within(() => {
         cy.contains('a', 'Edit').click();
       });
+      // Wait for edit form to be ready
+      productPage.verifyEditForm();
       const updatedName = `${uniqueProduct.name}_UPDATED`;
       productPage.clearAndFillField('name', updatedName);
       cy.submitProductForm();

@@ -85,24 +85,44 @@ jobs:
         working-directory: backend/crud-application
         run: |
           mvn clean install -DskipTests
-          mvn spring-boot:run &
+          nohup mvn spring-boot:run > backend.log 2>&1 &
+          echo $! > backend.pid
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
           SPRING_DATASOURCE_USERNAME: testuser
           SPRING_DATASOURCE_PASSWORD: testpass
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+          SPRING_JPA_HIBERNATE_DDL_AUTO: update
 
       - name: Wait for Backend
         run: |
           echo "Waiting for backend to start..."
-          for i in {1..60}; do
-            if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8080/auth/login -X POST -H "Content-Type: application/json" -d '{"username":"test","password":"test"}' | grep -q "40[0-9]\|200"; then
+          for i in {1..90}; do
+            # Simple check: if port 8080 responds, backend is ready
+            if curl -f -s http://localhost:8080/auth/login -X POST -H "Content-Type: application/json" -d '{"username":"test","password":"test"}' > /dev/null 2>&1; then
               echo "Backend is ready!"
               exit 0
             fi
-            echo "Attempt $i: Backend not ready yet, waiting 2 seconds..."
+            # Also check if port is open (simpler check)
+            if timeout 1 bash -c "echo > /dev/tcp/localhost/8080" 2>/dev/null; then
+              echo "Port 8080 is open, backend might be starting..."
+            fi
+            if [ $((i % 10)) -eq 0 ]; then
+              echo "Attempt $i: Backend not ready yet, waiting 2 seconds..."
+              if [ -f backend/crud-application/backend.log ]; then
+                echo "Last 10 lines of backend log:"
+                tail -10 backend/crud-application/backend.log || true
+              fi
+            else
+              echo "Attempt $i: Backend not ready yet, waiting 2 seconds..."
+            fi
             sleep 2
           done
-          echo "Backend failed to start within 120 seconds"
+          echo "Backend failed to start within 180 seconds"
+          if [ -f backend/crud-application/backend.log ]; then
+            echo "=== Full Backend Log ==="
+            cat backend/crud-application/backend.log
+          fi
           exit 1
 
       - name: Install Frontend dependencies

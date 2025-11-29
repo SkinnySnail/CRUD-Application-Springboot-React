@@ -79,9 +79,7 @@ jobs:
           node-version: "18"
 
       - name: Install Cypress dependencies
-        run: |
-          npm install
-          cd cypress && npm install
+        run: npm install
 
       - name: Start Backend Server
         working-directory: backend/crud-application
@@ -113,9 +111,7 @@ jobs:
           timeout 120 bash -c 'until curl -f http://localhost:3000 2>/dev/null; do sleep 2; done' || true
 
       - name: Run Cypress E2E Tests
-        working-directory: cypress
-        run: |
-          npx cypress run --config baseUrl=http://localhost:3000
+        run: npx cypress run --config baseUrl=http://localhost:3000
         continue-on-error: true
 
       - name: Upload E2E Test Results

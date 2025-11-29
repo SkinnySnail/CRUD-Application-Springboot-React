@@ -3,6 +3,8 @@ package com.crud.crud.application.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.crud.crud.application.dto.ProductDto;
@@ -98,6 +100,17 @@ public class ProductService {
         return productRepository.findAll().stream()
                 .map(ProductDto::fromEntity)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Get all products with pagination
+     * 
+     * @param pageable pagination information
+     * @return page of products
+     */
+    public Page<ProductDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductDto::fromEntity);
     }
 
     /**

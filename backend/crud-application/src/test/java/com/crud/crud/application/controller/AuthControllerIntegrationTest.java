@@ -9,7 +9,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,5 +71,63 @@ class AuthControllerIntegrationTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.token").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("POST /auth/login - CORS headers được set đúng")
+    void testCorsHeaders() throws Exception {
+        UserDto request = new UserDto("testuser", "Test123");
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("testuser");
+        user.setPassword("Test123");
+
+        when(authService.login(any(UserDto.class))).thenReturn(user);
+        when(jwtUtil.generateToken("testuser")).thenReturn("mocked-jwt-token");
+        when(jwtUtil.getTokenValidityMilliseconds()).thenReturn(3600000L);
+
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Origin", "http://localhost:3000"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"));
+    }
+
+    @Test
+    @DisplayName("OPTIONS /auth/login - CORS preflight request")
+    void testCorsPreflight() throws Exception {
+        mockMvc.perform(options("/auth/login")
+                .header("Origin", "http://localhost:3000")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "Content-Type"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"));
+    }
+
+    @Test
+    @DisplayName("POST /auth/login - Validation error: username rỗng (TC_LOGIN_004)")
+    void testLoginWithEmptyUsername() throws Exception {
+        UserDto request = new UserDto("", "Test123");
+        
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Username is required"));
+    }
+
+    @Test
+    @DisplayName("POST /auth/login - Validation error: password rỗng (TC_LOGIN_005)")
+    void testLoginWithEmptyPassword() throws Exception {
+        UserDto request = new UserDto("testuser", "");
+        
+        mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Password is required"));
     }
 }

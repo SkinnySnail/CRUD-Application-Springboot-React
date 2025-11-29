@@ -22,6 +22,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import com.crud.crud.application.dto.ProductDto;
 import com.crud.crud.application.entity.Product;
 import com.crud.crud.application.repository.ProductRepository;
@@ -210,6 +215,73 @@ class ProductServiceUnitTest {
                 assertEquals("Laptop", result.get(0).getName());
                 assertEquals("Mouse", result.get(1).getName());
                 verify(productRepository, times(1)).findAll();
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_11: Lay tat ca san pham voi pagination")
+        void testGetAllProductsWithPagination() {
+                // Arrange
+                Product product1 = new Product(
+                                1L, "Laptop", 15000000.0, 10, "Electronics");
+                Product product2 = new Product(
+                                2L, "Mouse", 500000.0, 20, "Electronics");
+                Product product3 = new Product(
+                                3L, "Keyboard", 800000.0, 15, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1, product2, product3);
+                
+                // Page 0, size 2
+                Pageable pageable = PageRequest.of(0, 2);
+                List<Product> pageProducts = Arrays.asList(product1, product2);
+                Page<Product> productPage = new PageImpl<>(pageProducts, pageable, allProducts.size());
+
+                when(productRepository.findAll(pageable))
+                                .thenReturn(productPage);
+
+                // Act
+                Page<ProductDto> result = productService.getAllProducts(pageable);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(2, result.getContent().size()); // Page size = 2
+                assertEquals(3, result.getTotalElements()); // Total elements = 3
+                assertEquals(2, result.getTotalPages()); // Total pages = 2 (3 items / 2 per page)
+                assertEquals(0, result.getNumber()); // Current page = 0
+                assertEquals("Laptop", result.getContent().get(0).getName());
+                assertEquals("Mouse", result.getContent().get(1).getName());
+                verify(productRepository, times(1)).findAll(pageable);
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_12: Lay tat ca san pham voi pagination - page 2")
+        void testGetAllProductsWithPaginationPage2() {
+                // Arrange
+                Product product1 = new Product(
+                                1L, "Laptop", 15000000.0, 10, "Electronics");
+                Product product2 = new Product(
+                                2L, "Mouse", 500000.0, 20, "Electronics");
+                Product product3 = new Product(
+                                3L, "Keyboard", 800000.0, 15, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1, product2, product3);
+                
+                // Page 1, size 2 (second page)
+                Pageable pageable = PageRequest.of(1, 2);
+                List<Product> pageProducts = Arrays.asList(product3);
+                Page<Product> productPage = new PageImpl<>(pageProducts, pageable, allProducts.size());
+
+                when(productRepository.findAll(pageable))
+                                .thenReturn(productPage);
+
+                // Act
+                Page<ProductDto> result = productService.getAllProducts(pageable);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.getContent().size()); // Page size = 1 (last page)
+                assertEquals(3, result.getTotalElements()); // Total elements = 3
+                assertEquals(2, result.getTotalPages()); // Total pages = 2
+                assertEquals(1, result.getNumber()); // Current page = 1
+                assertEquals("Keyboard", result.getContent().get(0).getName());
+                verify(productRepository, times(1)).findAll(pageable);
         }
 
         @Test

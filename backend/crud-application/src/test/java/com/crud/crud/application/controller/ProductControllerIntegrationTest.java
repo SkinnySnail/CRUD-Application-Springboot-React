@@ -1,23 +1,30 @@
 package com.crud.crud.application.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.crud.crud.application.dto.ProductDto;
-import com.crud.crud.application.service.ProductService;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.crud.crud.application.dto.ProductDto;
+import com.crud.crud.application.service.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(ProductController.class)
 @ContextConfiguration(classes = { ProductController.class })
@@ -35,8 +42,21 @@ class ProductControllerIntegrationTest {
     @Test
     @DisplayName("TC_INTER_1: GET /products - Lấy danh sách sản phẩm")
     void testGetAllProducts() throws Exception {
+        List<ProductDto> products = Arrays.asList(
+                new ProductDto("Laptop", 15000000.0, 10, "Electronics"),
+                new ProductDto("Mouse", 200000.0, 50, "Electronics")
+        );
+        products.get(0).setId(1L);
+        products.get(1).setId(2L);
+        when(productService.getAllProducts()).thenReturn(products);
+
         mockMvc.perform(get("/products"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].name").value("Laptop"))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[1].name").value("Mouse"))
+                .andExpect(jsonPath("$[1].id").value(2L));
     }
 
     @Test

@@ -2,12 +2,15 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+import "@testing-library/jest-dom";
+
+// Mock window.alert
+global.alert = jest.fn();
 
 // Mock axios globally
-jest.mock('axios', () => {
+jest.mock("axios", () => {
   const mockAxios = {
-    create: jest.fn(function() {
+    create: jest.fn(function () {
       return mockAxios;
     }),
     get: jest.fn(() => Promise.resolve({ data: {} })),

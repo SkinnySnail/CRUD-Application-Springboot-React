@@ -331,4 +331,154 @@ class ProductServiceUnitTest {
                 verify(productRepository, times(1)).findById(productId);
                 verify(productRepository, times(1)).save(any(Product.class));
         }
+
+        @Test
+        @DisplayName("TC_UNIT_13: Search products by keyword - Tim thay")
+        void testSearchProducts_WithKeyword() {
+                // Arrange
+                String keyword = "Laptop";
+                Product product1 = new Product(1L, "Laptop Dell", 15000000.0, 10, "Electronics");
+                Product product2 = new Product(2L, "Laptop HP", 12000000.0, 5, "Electronics");
+                List<Product> products = Arrays.asList(product1, product2);
+
+                when(productRepository.searchByKeyword(keyword)).thenReturn(products);
+
+                // Act
+                List<ProductDto> result = productService.searchProducts(keyword);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(2, result.size());
+                assertEquals("Laptop Dell", result.get(0).getName());
+                verify(productRepository, times(1)).searchByKeyword(keyword);
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_14: Search products by keyword - Keyword rong")
+        void testSearchProducts_WithEmptyKeyword() {
+                // Arrange
+                String keyword = "";
+                Product product1 = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1);
+
+                when(productRepository.findAll()).thenReturn(allProducts);
+
+                // Act
+                List<ProductDto> result = productService.searchProducts(keyword);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                verify(productRepository, times(1)).findAll();
+                verify(productRepository, never()).searchByKeyword(any());
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_15: Search products by keyword - Keyword null")
+        void testSearchProducts_WithNullKeyword() {
+                // Arrange
+                Product product1 = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1);
+
+                when(productRepository.findAll()).thenReturn(allProducts);
+
+                // Act
+                List<ProductDto> result = productService.searchProducts(null);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                verify(productRepository, times(1)).findAll();
+                verify(productRepository, never()).searchByKeyword(any());
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_16: Search products by name - Tim thay")
+        void testSearchByName_Found() {
+                // Arrange
+                String name = "Laptop";
+                Product product1 = new Product(1L, "Laptop Dell", 15000000.0, 10, "Electronics");
+                List<Product> products = Arrays.asList(product1);
+
+                when(productRepository.findByProductNameContainingIgnoreCase(name)).thenReturn(products);
+
+                // Act
+                List<ProductDto> result = productService.searchByName(name);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                assertEquals("Laptop Dell", result.get(0).getName());
+                verify(productRepository, times(1)).findByProductNameContainingIgnoreCase(name);
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_17: Search products by name - Name rong")
+        void testSearchByName_EmptyName() {
+                // Arrange
+                String name = "";
+                Product product1 = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1);
+
+                when(productRepository.findAll()).thenReturn(allProducts);
+
+                // Act
+                List<ProductDto> result = productService.searchByName(name);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                verify(productRepository, times(1)).findAll();
+                verify(productRepository, never()).findByProductNameContainingIgnoreCase(any());
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_18: Search products by category - Tim thay")
+        void testSearchByCategory_Found() {
+                // Arrange
+                String category = "Electronics";
+                Product product1 = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
+                Product product2 = new Product(2L, "Mouse", 500000.0, 20, "Electronics");
+                List<Product> products = Arrays.asList(product1, product2);
+
+                when(productRepository.findByCategoryContainingIgnoreCase(category)).thenReturn(products);
+
+                // Act
+                List<ProductDto> result = productService.searchByCategory(category);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(2, result.size());
+                verify(productRepository, times(1)).findByCategoryContainingIgnoreCase(category);
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_19: Search products by category - Category rong")
+        void testSearchByCategory_EmptyCategory() {
+                // Arrange
+                String category = "";
+                Product product1 = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
+                List<Product> allProducts = Arrays.asList(product1);
+
+                when(productRepository.findAll()).thenReturn(allProducts);
+
+                // Act
+                List<ProductDto> result = productService.searchByCategory(category);
+
+                // Assert
+                assertNotNull(result);
+                assertEquals(1, result.size());
+                verify(productRepository, times(1)).findAll();
+                verify(productRepository, never()).findByCategoryContainingIgnoreCase(any());
+        }
+
+        @Test
+        @DisplayName("TC_UNIT_20: ProductService default constructor")
+        void testProductServiceDefaultConstructor() {
+                // Act
+                ProductService service = new ProductService();
+
+                // Assert
+                assertNotNull(service);
+        }
 }

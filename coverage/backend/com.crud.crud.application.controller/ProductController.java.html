@@ -41,19 +41,19 @@ public class ProductController {
     @GetMapping(&quot;/product/{id}&quot;)
     ResponseEntity&lt;ProductDto&gt; getProductById(@PathVariable Long id) {
 <span class="fc" id="L43">        ProductDto product = productService.getProductById(id);</span>
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();</span>
     }
 
     @PutMapping(&quot;/product/{id}&quot;)
     ResponseEntity&lt;ProductDto&gt; updateProduct(@RequestBody ProductDto productDto, @PathVariable Long id) {
 <span class="fc" id="L49">        ProductDto updatedProduct = productService.updateProduct(id, productDto);</span>
-<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        return updatedProduct != null ? ResponseEntity.ok(updatedProduct) : ResponseEntity.notFound().build();</span>
     }
 
     @DeleteMapping(&quot;/product/{id}&quot;)
     ResponseEntity&lt;String&gt; deleteProduct(@PathVariable Long id) {
 <span class="fc" id="L55">        boolean deleted = productService.deleteProduct(id);</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        return deleted ? ResponseEntity.ok(&quot;Product deleted successfully&quot;) : ResponseEntity.notFound().build();</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        return deleted ? ResponseEntity.ok(&quot;Product deleted successfully&quot;) : ResponseEntity.notFound().build();</span>
     }
 
     @GetMapping(&quot;/products/search&quot;)
@@ -63,21 +63,21 @@ public class ProductController {
             @RequestParam(required = false) String category) {
         List&lt;ProductDto&gt; products;
 
-<span class="nc bnc" id="L66" title="All 4 branches missed.">        if (keyword != null &amp;&amp; !keyword.trim().isEmpty()) {</span>
+<span class="pc bpc" id="L66" title="1 of 4 branches missed.">        if (keyword != null &amp;&amp; !keyword.trim().isEmpty()) {</span>
             // Search by keyword (searches both name and category)
-<span class="nc" id="L68">            products = productService.searchProducts(keyword);</span>
-<span class="nc bnc" id="L69" title="All 4 branches missed.">        } else if (name != null &amp;&amp; !name.trim().isEmpty()) {</span>
+<span class="fc" id="L68">            products = productService.searchProducts(keyword);</span>
+<span class="pc bpc" id="L69" title="1 of 4 branches missed.">        } else if (name != null &amp;&amp; !name.trim().isEmpty()) {</span>
             // Search by name only
-<span class="nc" id="L71">            products = productService.searchByName(name);</span>
-<span class="nc bnc" id="L72" title="All 4 branches missed.">        } else if (category != null &amp;&amp; !category.trim().isEmpty()) {</span>
+<span class="fc" id="L71">            products = productService.searchByName(name);</span>
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">        } else if (category != null &amp;&amp; !category.trim().isEmpty()) {</span>
             // Search by category only
-<span class="nc" id="L74">            products = productService.searchByCategory(category);</span>
+<span class="fc" id="L74">            products = productService.searchByCategory(category);</span>
         } else {
             // No search params, return all products
-<span class="nc" id="L77">            products = productService.getAllProducts();</span>
+<span class="fc" id="L77">            products = productService.getAllProducts();</span>
         }
 
-<span class="nc" id="L80">        return ResponseEntity.ok(products);</span>
+<span class="fc" id="L80">        return ResponseEntity.ok(products);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -27,20 +27,20 @@ import java.io.IOException;
 <span class="fc" id="L27">        String jwt = null;</span>
 
         // Extract JWT token from Authorization header
-<span class="pc bpc" id="L30" title="3 of 4 branches missed.">        if (authorizationHeader != null &amp;&amp; authorizationHeader.startsWith(&quot;Bearer &quot;)) {</span>
-<span class="nc" id="L31">            jwt = authorizationHeader.substring(7);</span>
+<span class="fc bfc" id="L30" title="All 4 branches covered.">        if (authorizationHeader != null &amp;&amp; authorizationHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="fc" id="L31">            jwt = authorizationHeader.substring(7);</span>
             try {
-<span class="nc" id="L33">                username = jwtUtil.extractUsername(jwt);</span>
-<span class="nc" id="L34">            } catch (Exception e) {</span>
-<span class="nc" id="L35">                logger.error(&quot;Unable to extract username from JWT token&quot;, e);</span>
-<span class="nc" id="L36">            }</span>
+<span class="fc" id="L33">                username = jwtUtil.extractUsername(jwt);</span>
+<span class="fc" id="L34">            } catch (Exception e) {</span>
+<span class="fc" id="L35">                logger.error(&quot;Unable to extract username from JWT token&quot;, e);</span>
+<span class="fc" id="L36">            }</span>
         }
 
         // Validate token
-<span class="pc bpc" id="L40" title="3 of 4 branches missed.">        if (username != null &amp;&amp; jwt != null) {</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">            if (jwtUtil.validateToken(jwt, username)) {</span>
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">        if (username != null &amp;&amp; jwt != null) {</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">            if (jwtUtil.validateToken(jwt, username)) {</span>
                 // Token is valid, add username to request attribute
-<span class="nc" id="L43">                request.setAttribute(&quot;username&quot;, username);</span>
+<span class="fc" id="L43">                request.setAttribute(&quot;username&quot;, username);</span>
             } else {
 <span class="nc" id="L45">                logger.warn(&quot;JWT token validation failed for user: &quot; + username);</span>
             }

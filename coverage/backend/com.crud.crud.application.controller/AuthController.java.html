@@ -27,14 +27,14 @@ import java.util.Map;
     @PostMapping(&quot;/login&quot;)
     public ResponseEntity&lt;?&gt; login(@RequestBody UserDto userDto) {
         // Validate input
-<span class="pc bpc" id="L30" title="1 of 4 branches missed.">        if (userDto.getUsername() == null || userDto.getUsername().trim().isEmpty()) {</span>
+<span class="fc bfc" id="L30" title="All 4 branches covered.">        if (userDto.getUsername() == null || userDto.getUsername().trim().isEmpty()) {</span>
 <span class="fc" id="L31">            AuthResponse response = new AuthResponse();</span>
 <span class="fc" id="L32">            response.setSuccess(false);</span>
 <span class="fc" id="L33">            response.setMessage(&quot;Username is required&quot;);</span>
 <span class="fc" id="L34">            return ResponseEntity.badRequest().body(response);</span>
         }
 
-<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {</span>
+<span class="fc bfc" id="L37" title="All 4 branches covered.">        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {</span>
 <span class="fc" id="L38">            AuthResponse response = new AuthResponse();</span>
 <span class="fc" id="L39">            response.setSuccess(false);</span>
 <span class="fc" id="L40">            response.setMessage(&quot;Password is required&quot;);</span>
@@ -66,42 +66,42 @@ import java.util.Map;
 
     @PostMapping(&quot;/register&quot;)
     public ResponseEntity&lt;?&gt; register(@RequestBody UserDto userDto) {
-<span class="nc" id="L69">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L69">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
 
         // Validate user input
-<span class="nc" id="L72">        Map&lt;String, String&gt; validationErrors = UserValidation.validateUser(userDto);</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (!validationErrors.isEmpty()) {</span>
-<span class="nc" id="L74">            response.put(&quot;success&quot;, false);</span>
-<span class="nc" id="L75">            response.put(&quot;message&quot;, &quot;Validation failed&quot;);</span>
-<span class="nc" id="L76">            response.put(&quot;errors&quot;, validationErrors);</span>
-<span class="nc" id="L77">            return ResponseEntity.badRequest().body(response);</span>
+<span class="fc" id="L72">        Map&lt;String, String&gt; validationErrors = UserValidation.validateUser(userDto);</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if (!validationErrors.isEmpty()) {</span>
+<span class="fc" id="L74">            response.put(&quot;success&quot;, false);</span>
+<span class="fc" id="L75">            response.put(&quot;message&quot;, &quot;Validation failed&quot;);</span>
+<span class="fc" id="L76">            response.put(&quot;errors&quot;, validationErrors);</span>
+<span class="fc" id="L77">            return ResponseEntity.badRequest().body(response);</span>
         }
 
         // Check if username already exists
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (authService.existsByUsername(userDto.getUsername())) {</span>
-<span class="nc" id="L82">            response.put(&quot;success&quot;, false);</span>
-<span class="nc" id="L83">            response.put(&quot;message&quot;, &quot;Username already exists&quot;);</span>
-<span class="nc" id="L84">            return ResponseEntity.badRequest().body(response);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (authService.existsByUsername(userDto.getUsername())) {</span>
+<span class="fc" id="L82">            response.put(&quot;success&quot;, false);</span>
+<span class="fc" id="L83">            response.put(&quot;message&quot;, &quot;Username already exists&quot;);</span>
+<span class="fc" id="L84">            return ResponseEntity.badRequest().body(response);</span>
         }
 
         // Create new user
-<span class="nc" id="L88">        User newUser = authService.createUser(userDto);</span>
-<span class="nc" id="L89">        response.put(&quot;success&quot;, true);</span>
-<span class="nc" id="L90">        response.put(&quot;message&quot;, &quot;User registered successfully&quot;);</span>
-<span class="nc" id="L91">        response.put(&quot;user&quot;, UserDto.fromEntity(newUser));</span>
+<span class="fc" id="L88">        User newUser = authService.createUser(userDto);</span>
+<span class="fc" id="L89">        response.put(&quot;success&quot;, true);</span>
+<span class="fc" id="L90">        response.put(&quot;message&quot;, &quot;User registered successfully&quot;);</span>
+<span class="fc" id="L91">        response.put(&quot;user&quot;, UserDto.fromEntity(newUser));</span>
 
-<span class="nc" id="L93">        return ResponseEntity.ok(response);</span>
+<span class="fc" id="L93">        return ResponseEntity.ok(response);</span>
     }
 
     @GetMapping(&quot;/check-username/{username}&quot;)
     public ResponseEntity&lt;?&gt; checkUsername(@PathVariable String username) {
-<span class="nc" id="L98">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L99">        boolean exists = authService.existsByUsername(username);</span>
+<span class="fc" id="L98">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L99">        boolean exists = authService.existsByUsername(username);</span>
 
-<span class="nc" id="L101">        response.put(&quot;exists&quot;, exists);</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        response.put(&quot;available&quot;, !exists);</span>
+<span class="fc" id="L101">        response.put(&quot;exists&quot;, exists);</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        response.put(&quot;available&quot;, !exists);</span>
 
-<span class="nc" id="L104">        return ResponseEntity.ok(response);</span>
+<span class="fc" id="L104">        return ResponseEntity.ok(response);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

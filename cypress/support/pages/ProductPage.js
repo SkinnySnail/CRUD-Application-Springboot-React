@@ -19,12 +19,19 @@ class ProductPage {
   }
 
   clearAndFillField(fieldName, value) {
-    // Support both full selector and field name
-    const selector = fieldName.includes("[")
-      ? fieldName
-      : `input[name="${fieldName}"], textarea[name="${fieldName}"], select[name="${fieldName}"]`;
-    // Wait for element to be visible before interacting
-    cy.get(selector).should("be.visible").clear().type(value);
+    if (fieldName.includes("[")) {
+      cy.get(fieldName).should("be.visible").clear().type(value);
+    } else {
+      cy.get("body").then(($body) => {
+        if ($body.find(`input[name="${fieldName}"]`).length > 0) {
+          cy.get(`input[name="${fieldName}"]`).should("be.visible").clear().type(value);
+        } else if ($body.find(`textarea[name="${fieldName}"]`).length > 0) {
+          cy.get(`textarea[name="${fieldName}"]`).should("be.visible").clear().type(value);
+        } else {
+          cy.get(`select[name="${fieldName}"]`).should("be.visible").select(value);
+        }
+      });
+    }
   }
 
   submitForm() {
@@ -143,7 +150,10 @@ class ProductPage {
   }
 
   getProductRowCount() {
-    return cy.get("tbody tr").its("length");
+    return cy.get("tbody").then(($tbody) => {
+      const rows = $tbody.find("tr");
+      return rows.length;
+    });
   }
 
   verifyEditForm() {
@@ -177,7 +187,15 @@ class ProductPage {
   }
 
   verifyFieldValue(fieldName, expectedValue) {
-    cy.get(`[name="${fieldName}"]`).should("have.value", expectedValue);
+    cy.get("body").then(($body) => {
+      if ($body.find(`input[name="${fieldName}"]`).length > 0) {
+        cy.get(`input[name="${fieldName}"]`).should("have.value", expectedValue);
+      } else if ($body.find(`textarea[name="${fieldName}"]`).length > 0) {
+        cy.get(`textarea[name="${fieldName}"]`).should("have.value", expectedValue);
+      } else {
+        cy.get(`select[name="${fieldName}"]`).should("have.value", expectedValue);
+      }
+    });
   }
 
   getTextFromViewPage(label) {

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserValidation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crud-application</a> &gt; <a href="index.source.html" class="el_package">com.crud.crud.application.util</a> &gt; <span class="el_source">UserValidation.java</span></div><h1>UserValidation.java</h1><pre class="source lang-java linenums">package com.crud.crud.application.util;
+
+import com.crud.crud.application.dto.UserDto;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+<span class="nc" id="L8">public class UserValidation {</span>
+
+    // Regex patterns
+<span class="fc" id="L11">    private static final Pattern USERNAME_PATTERN = Pattern.compile(&quot;^[a-zA-Z0-9._-]+$&quot;);</span>
+<span class="fc" id="L12">    private static final Pattern PASSWORD_COMPLEXITY_PATTERN = Pattern.compile(&quot;^(?=.*[a-zA-Z])(?=.*\\d).+$&quot;);</span>
+
+    public static Map&lt;String, String&gt; validateUser(UserDto userDto) {
+<span class="fc" id="L15">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+
+        // Validate username
+<span class="pc bpc" id="L18" title="2 of 4 branches missed.">        if (userDto.getUsername() == null || userDto.getUsername().trim().isEmpty()) {</span>
+<span class="nc" id="L19">            errors.put(&quot;username&quot;, &quot;Username is required&quot;);</span>
+        } else {
+<span class="fc" id="L21">            String username = userDto.getUsername().trim();</span>
+
+            // Check length
+<span class="fc bfc" id="L24" title="All 2 branches covered.">            if (username.length() &lt; 3) {</span>
+<span class="fc" id="L25">                errors.put(&quot;username&quot;, &quot;Username must be at least 3 characters&quot;);</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">            } else if (username.length() &gt; 50) {</span>
+<span class="nc" id="L27">                errors.put(&quot;username&quot;, &quot;Username must not exceed 50 characters&quot;);</span>
+            }
+
+            // Check valid characters
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            if (!USERNAME_PATTERN.matcher(username).matches()) {</span>
+<span class="nc" id="L32">                errors.put(&quot;username&quot;,</span>
+                        &quot;Username can only contain letters, numbers, dots (.), hyphens (-), and underscores (_)&quot;);
+            }
+
+            // Check for spaces
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">            if (username.contains(&quot; &quot;)) {</span>
+<span class="nc" id="L38">                errors.put(&quot;username&quot;, &quot;Username cannot contain spaces&quot;);</span>
+            }
+        }
+
+        // Validate password
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">        if (userDto.getPassword() == null || userDto.getPassword().isEmpty()) {</span>
+<span class="nc" id="L44">            errors.put(&quot;password&quot;, &quot;Password is required&quot;);</span>
+        } else {
+<span class="fc" id="L46">            String password = userDto.getPassword();</span>
+
+            // Check length
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (password.length() &lt; 6) {</span>
+<span class="fc" id="L50">                errors.put(&quot;password&quot;, &quot;Password must be at least 6 characters&quot;);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            } else if (password.length() &gt; 100) {</span>
+<span class="nc" id="L52">                errors.put(&quot;password&quot;, &quot;Password must not exceed 100 characters&quot;);</span>
+            }
+
+            // Check complexity (at least one letter and one number)
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            if (!PASSWORD_COMPLEXITY_PATTERN.matcher(password).matches()) {</span>
+<span class="fc" id="L57">                errors.put(&quot;password&quot;, &quot;Password must contain at least one letter and one number&quot;);</span>
+            }
+
+            // Check if password contains username
+<span class="pc bpc" id="L61" title="2 of 4 branches missed.">            if (userDto.getUsername() != null &amp;&amp; !userDto.getUsername().isEmpty()) {</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                if (password.toLowerCase().contains(userDto.getUsername().toLowerCase())) {</span>
+<span class="nc" id="L63">                    errors.put(&quot;password&quot;, &quot;Password cannot contain username&quot;);</span>
+                }
+            }
+        }
+
+<span class="fc" id="L68">        return errors;</span>
+    }
+
+    public static boolean isValidUsername(String username) {
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        if (username == null || username.trim().isEmpty()) {</span>
+<span class="fc" id="L73">            return false;</span>
+        }
+
+<span class="fc" id="L76">        String trimmedUsername = username.trim();</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return trimmedUsername.length() &gt;= 3</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                &amp;&amp; trimmedUsername.length() &lt;= 50</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                &amp;&amp; USERNAME_PATTERN.matcher(trimmedUsername).matches()</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                &amp;&amp; !trimmedUsername.contains(&quot; &quot;);</span>
+    }
+
+    public static boolean isValidPassword(String password, String username) {
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">        if (password == null || password.isEmpty()) {</span>
+<span class="fc" id="L85">            return false;</span>
+        }
+
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        boolean lengthValid = password.length() &gt;= 6 &amp;&amp; password.length() &lt;= 100;</span>
+<span class="fc" id="L89">        boolean complexityValid = PASSWORD_COMPLEXITY_PATTERN.matcher(password).matches();</span>
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">        boolean notContainsUsername = username == null || !password.toLowerCase().contains(username.toLowerCase());</span>
+
+<span class="fc bfc" id="L92" title="All 6 branches covered.">        return lengthValid &amp;&amp; complexityValid &amp;&amp; notContainsUsername;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

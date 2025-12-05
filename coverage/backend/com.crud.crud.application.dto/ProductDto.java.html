@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crud-application</a> &gt; <a href="index.source.html" class="el_package">com.crud.crud.application.dto</a> &gt; <span class="el_source">ProductDto.java</span></div><h1>ProductDto.java</h1><pre class="source lang-java linenums">package com.crud.crud.application.dto;
+
+import com.crud.crud.application.entity.Product;
+
+public class ProductDto {
+    private Long id;
+    private String name;
+    private Double price;
+    private Integer quantity;
+    private String category;
+    private String description;
+
+<span class="fc" id="L13">    public ProductDto() {</span>
+<span class="fc" id="L14">    }</span>
+
+<span class="fc" id="L16">    public ProductDto(String name, Double price, Integer quantity, String category) {</span>
+<span class="fc" id="L17">        this.name = name;</span>
+<span class="fc" id="L18">        this.price = price;</span>
+<span class="fc" id="L19">        this.quantity = quantity;</span>
+<span class="fc" id="L20">        this.category = category;</span>
+<span class="fc" id="L21">    }</span>
+
+    // Getters and Setters
+    public Long getId() {
+<span class="fc" id="L25">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="fc" id="L29">        this.id = id;</span>
+<span class="fc" id="L30">    }</span>
+
+    public String getName() {
+<span class="fc" id="L33">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L37">        this.name = name;</span>
+<span class="fc" id="L38">    }</span>
+
+    public Double getPrice() {
+<span class="fc" id="L41">        return price;</span>
+    }
+
+    public void setPrice(Double price) {
+<span class="fc" id="L45">        this.price = price;</span>
+<span class="fc" id="L46">    }</span>
+
+    public Integer getQuantity() {
+<span class="fc" id="L49">        return quantity;</span>
+    }
+
+    public void setQuantity(Integer quantity) {
+<span class="fc" id="L53">        this.quantity = quantity;</span>
+<span class="fc" id="L54">    }</span>
+
+    public String getCategory() {
+<span class="fc" id="L57">        return category;</span>
+    }
+
+    public void setCategory(String category) {
+<span class="fc" id="L61">        this.category = category;</span>
+<span class="fc" id="L62">    }</span>
+
+    public String getDescription() {
+<span class="fc" id="L65">        return description;</span>
+    }
+
+    public void setDescription(String description) {
+<span class="fc" id="L69">        this.description = description;</span>
+<span class="fc" id="L70">    }</span>
+
+    public Product toEntity() {
+<span class="fc" id="L73">        Product product = new Product();</span>
+<span class="fc" id="L74">        product.setId(this.id);</span>
+<span class="fc" id="L75">        product.setProductName(this.name);</span>
+<span class="fc" id="L76">        product.setPrice(this.price);</span>
+<span class="fc" id="L77">        product.setQuantity(this.quantity);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        if (this.category != null) {</span>
+<span class="fc" id="L79">            product.setCategory(this.category);</span>
+        }
+<span class="fc" id="L81">        product.setDescription(this.description);</span>
+<span class="fc" id="L82">        return product;</span>
+    }
+
+    public static ProductDto fromEntity(Product product) {
+<span class="fc" id="L86">        ProductDto dto = new ProductDto();</span>
+<span class="fc" id="L87">        dto.setId(product.getId());</span>
+<span class="fc" id="L88">        dto.setName(product.getProductName());</span>
+<span class="fc" id="L89">        dto.setPrice(product.getPrice());</span>
+<span class="fc" id="L90">        dto.setQuantity(product.getQuantity());</span>
+<span class="fc" id="L91">        dto.setCategory(product.getCategory());</span>
+<span class="fc" id="L92">        dto.setDescription(product.getDescription());</span>
+<span class="fc" id="L93">        return dto;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L98">        return &quot;ProductDto{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, price=&quot; + price +
+                &quot;, quantity=&quot; + quantity +
+                &quot;, category='&quot; + category + '\'' +
+                &quot;, description='&quot; + description + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

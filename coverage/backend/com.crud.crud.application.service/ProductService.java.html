@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">crud-application</a> &gt; <a href="index.source.html" class="el_package">com.crud.crud.application.service</a> &gt; <span class="el_source">ProductService.java</span></div><h1>ProductService.java</h1><pre class="source lang-java linenums">package com.crud.crud.application.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.crud.crud.application.dto.ProductDto;
+import com.crud.crud.application.entity.Product;
+import com.crud.crud.application.repository.ProductRepository;
+
+@Service
+public class ProductService {
+    @Autowired
+    private ProductRepository productRepository;
+
+<span class="fc" id="L19">    public ProductService(ProductRepository productRepository) {</span>
+<span class="fc" id="L20">        this.productRepository = productRepository;</span>
+<span class="fc" id="L21">    }</span>
+
+<span class="fc" id="L23">    public ProductService() {</span>
+        // Default constructor
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Create a new product
+     * 
+     * @param productDto product data to create
+     * @return created product with ID
+     */
+    public ProductDto createProduct(ProductDto productDto) {
+<span class="fc" id="L34">        Product product = productDto.toEntity();</span>
+<span class="fc" id="L35">        Product savedProduct = productRepository.save(product);</span>
+<span class="fc" id="L36">        return ProductDto.fromEntity(savedProduct);</span>
+    }
+
+    /**
+     * Get product by ID
+     * 
+     * @param id product ID
+     * @return product data or null if not found
+     */
+    public ProductDto getProductById(Long id) {
+<span class="fc" id="L46">        return productRepository.findById(id)</span>
+<span class="fc" id="L47">                .map(ProductDto::fromEntity)</span>
+<span class="fc" id="L48">                .orElse(null);</span>
+    }
+
+    /**
+     * Update product
+     * 
+     * @param id         product ID to update
+     * @param productDto new product data
+     * @return updated product
+     */
+    public ProductDto updateProduct(Long id, ProductDto productDto) {
+<span class="fc" id="L59">        return productRepository.findById(id).map(existingProduct -&gt; {</span>
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">            if (productDto.getName() != null &amp;&amp; !productDto.getName().trim().isEmpty()) {</span>
+<span class="fc" id="L61">                existingProduct.setProductName(productDto.getName());</span>
+            }
+<span class="pc bpc" id="L63" title="1 of 4 branches missed.">            if (productDto.getPrice() != null &amp;&amp; productDto.getPrice() &gt; 0) {</span>
+<span class="fc" id="L64">                existingProduct.setPrice(productDto.getPrice());</span>
+            }
+<span class="pc bpc" id="L66" title="1 of 4 branches missed.">            if (productDto.getQuantity() != null &amp;&amp; productDto.getQuantity() &gt;= 0) {</span>
+<span class="fc" id="L67">                existingProduct.setQuantity(productDto.getQuantity());</span>
+            }
+<span class="pc bpc" id="L69" title="1 of 4 branches missed.">            if (productDto.getCategory() != null &amp;&amp; !productDto.getCategory().trim().isEmpty()) {</span>
+<span class="fc" id="L70">                existingProduct.setCategory(productDto.getCategory());</span>
+            }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if (productDto.getDescription() != null) {</span>
+<span class="nc" id="L73">                existingProduct.setDescription(productDto.getDescription());</span>
+            }
+<span class="fc" id="L75">            Product savedProduct = productRepository.save(existingProduct);</span>
+<span class="fc" id="L76">            return ProductDto.fromEntity(savedProduct);</span>
+<span class="fc" id="L77">        }).orElse(null);</span>
+    }
+
+    /**
+     * Delete product
+     * 
+     * @param id product ID to delete
+     * @return true if deleted, false if not found
+     */
+    public boolean deleteProduct(Long id) {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (productRepository.existsById(id)) {</span>
+<span class="fc" id="L88">            productRepository.deleteById(id);</span>
+<span class="fc" id="L89">            return true;</span>
+        }
+<span class="fc" id="L91">        return false;</span>
+    }
+
+    /**
+     * Get all products
+     * 
+     * @return list of all products
+     */
+    public List&lt;ProductDto&gt; getAllProducts() {
+<span class="fc" id="L100">        return productRepository.findAll().stream()</span>
+<span class="fc" id="L101">                .map(ProductDto::fromEntity)</span>
+<span class="fc" id="L102">                .collect(java.util.stream.Collectors.toList());</span>
+    }
+
+    /**
+     * Get all products with pagination
+     * 
+     * @param pageable pagination information
+     * @return page of products
+     */
+    public Page&lt;ProductDto&gt; getAllProducts(Pageable pageable) {
+<span class="fc" id="L112">        return productRepository.findAll(pageable)</span>
+<span class="fc" id="L113">                .map(ProductDto::fromEntity);</span>
+    }
+
+    /**
+     * Search products by keyword (searches in name and category)
+     * 
+     * @param keyword search keyword
+     * @return list of matching products
+     */
+    public List&lt;ProductDto&gt; searchProducts(String keyword) {
+<span class="fc bfc" id="L123" title="All 4 branches covered.">        if (keyword == null || keyword.trim().isEmpty()) {</span>
+<span class="fc" id="L124">            return getAllProducts();</span>
+        }
+<span class="fc" id="L126">        return productRepository.searchByKeyword(keyword.trim()).stream()</span>
+<span class="fc" id="L127">                .map(ProductDto::fromEntity)</span>
+<span class="fc" id="L128">                .collect(java.util.stream.Collectors.toList());</span>
+    }
+
+    /**
+     * Search products by name
+     * 
+     * @param name product name
+     * @return list of matching products
+     */
+    public List&lt;ProductDto&gt; searchByName(String name) {
+<span class="pc bpc" id="L138" title="1 of 4 branches missed.">        if (name == null || name.trim().isEmpty()) {</span>
+<span class="fc" id="L139">            return getAllProducts();</span>
+        }
+<span class="fc" id="L141">        return productRepository.findByProductNameContainingIgnoreCase(name.trim()).stream()</span>
+<span class="fc" id="L142">                .map(ProductDto::fromEntity)</span>
+<span class="fc" id="L143">                .collect(java.util.stream.Collectors.toList());</span>
+    }
+
+    /**
+     * Search products by category
+     * 
+     * @param category category name
+     * @return list of matching products
+     */
+    public List&lt;ProductDto&gt; searchByCategory(String category) {
+<span class="pc bpc" id="L153" title="1 of 4 branches missed.">        if (category == null || category.trim().isEmpty()) {</span>
+<span class="fc" id="L154">            return getAllProducts();</span>
+        }
+<span class="fc" id="L156">        return productRepository.findByCategoryContainingIgnoreCase(category.trim()).stream()</span>
+<span class="fc" id="L157">                .map(ProductDto::fromEntity)</span>
+<span class="fc" id="L158">                .collect(java.util.stream.Collectors.toList());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -28,6 +28,22 @@ jobs:
         with:
           files: backend/crud-application/target/site/jacoco/jacoco.xml
 
+      - name: Upload Backend Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: backend/crud-application/target/surefire-reports
+          if-no-files-found: ignore
+
+      - name: Upload Backend Coverage HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-html
+          path: backend/crud-application/target/site/jacoco
+          if-no-files-found: ignore
+
   frontend-test:
     runs-on: ubuntu-latest
     defaults:
@@ -47,6 +63,14 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: frontend/crudfront/coverage/lcov.info
+
+      - name: Upload Frontend Coverage HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-html
+          path: frontend/crudfront/coverage
+          if-no-files-found: ignore
 
   e2e-tests:
     runs-on: ubuntu-latest
@@ -145,3 +169,84 @@ jobs:
           name: cypress-videos
           path: cypress/videos
           if-no-files-found: ignore
+
+      - name: Upload E2E Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-reports
+          path: cypress/results
+          if-no-files-found: ignore
+
+  deploy-coverage:
+    runs-on: ubuntu-latest
+    needs: [backend-test, frontend-test, e2e-tests]
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Backend Coverage HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage-html
+          path: ./public/coverage/backend
+
+      - name: Download Frontend Coverage HTML
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage-html
+          path: ./public/coverage/frontend
+
+      - name: Create Coverage Index
+        run: |
+          mkdir -p ./public/coverage
+          cat > ./public/coverage/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Test Coverage Reports</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; }
+              h1 { color: #333; }
+              .coverage-links { margin-top: 20px; }
+              .coverage-links a { 
+                display: block; 
+                padding: 15px; 
+                margin: 10px 0; 
+                background: #f0f0f0; 
+                text-decoration: none; 
+                color: #333;
+                border-radius: 5px;
+              }
+              .coverage-links a:hover { background: #e0e0e0; }
+            </style>
+          </head>
+          <body>
+            <h1>📊 Test Coverage Reports</h1>
+            <div class="coverage-links">
+              <a href="./backend/index.html">🔹 Backend Coverage (JaCoCo)</a>
+              <a href="./frontend/lcov-report/index.html">🔹 Frontend Coverage (Jest)</a>
+            </div>
+          </body>
+          </html>
+          EOF
+
+      - name: Deploy Coverage to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          destination_dir: ./
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: [backend-test, frontend-test, e2e-tests]
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     # Bước deploy thực tế sẽ thay đổi tùy nền tảng (Azure, AWS, Vercel, FTP, v.v.)
+  #     # Ví dụ: echo thông báo thành công (demo CD)
+  #     - name: Notify Deployment Success
+  #       run: echo "Deployment completed! (Demo CD step)"

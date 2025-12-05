@@ -22,7 +22,7 @@ describe("Product CRUD Operations E2E Tests", () => {
       // Ensure at least one product exists by creating one
       productPage.clickAddProduct();
       productPage.fillProductForm(testProduct);
-      productPage.clickSubmit();
+      productPage.submitForm();
       cy.wait(500);
 
       cy.url().should("eq", `${baseUrl}/`);
@@ -36,7 +36,7 @@ describe("Product CRUD Operations E2E Tests", () => {
       // Ensure at least one product exists
       productPage.clickAddProduct();
       productPage.fillProductForm(testProduct);
-      productPage.clickSubmit();
+      productPage.submitForm();
       cy.wait(500);
 
       productPage.clickViewOnFirstProduct();
@@ -52,7 +52,7 @@ describe("Product CRUD Operations E2E Tests", () => {
       // Ensure at least one product exists
       productPage.clickAddProduct();
       productPage.fillProductForm(testProduct);
-      productPage.clickSubmit();
+      productPage.submitForm();
       cy.wait(500);
 
       productPage.clickViewOnFirstProduct();

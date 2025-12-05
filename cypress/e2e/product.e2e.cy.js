@@ -19,6 +19,12 @@ describe("Product CRUD Operations E2E Tests", () => {
 
   describe("Read/List Products Tests", () => {
     it("TC_READ_01: Should display products list on homepage", () => {
+      // Ensure at least one product exists by creating one
+      productPage.clickAddProduct();
+      productPage.fillProductForm(testProduct);
+      productPage.clickSubmit();
+      cy.wait(500);
+
       cy.url().should("eq", `${baseUrl}/`);
 
       productPage.verifyTableHeaders();
@@ -27,6 +33,12 @@ describe("Product CRUD Operations E2E Tests", () => {
     });
 
     it("TC_READ_02: Should view product details", () => {
+      // Ensure at least one product exists
+      productPage.clickAddProduct();
+      productPage.fillProductForm(testProduct);
+      productPage.clickSubmit();
+      cy.wait(500);
+
       productPage.clickViewOnFirstProduct();
 
       cy.url().should("include", "/viewproduct/");
@@ -37,6 +49,12 @@ describe("Product CRUD Operations E2E Tests", () => {
     });
 
     it("TC_READ_03: Should navigate back to home from product details", () => {
+      // Ensure at least one product exists
+      productPage.clickAddProduct();
+      productPage.fillProductForm(testProduct);
+      productPage.clickSubmit();
+      cy.wait(500);
+
       productPage.clickViewOnFirstProduct();
 
       cy.url().should("include", "/viewproduct/");
@@ -74,7 +92,7 @@ describe("Product CRUD Operations E2E Tests", () => {
         name: "Test Product",
         price: "-1000",
         quantity: "10",
-        category: "Electronics"
+        category: "Electronics",
       };
 
       productPage.fillProductForm(invalidProduct);
@@ -143,18 +161,25 @@ describe("Product CRUD Operations E2E Tests", () => {
       productPage.getTextFromViewPage("Product Name:").then((viewName) => {
         productPage.getTextFromViewPage("Price:").then((viewPrice) => {
           productPage.getTextFromViewPage("Quantity:").then((viewQuantity) => {
-            productPage.getTextFromViewPage("Description:").then((viewDescription) => {
-              productPage.getTextFromViewPage("Category:").then((viewCategory) => {
-                productPage.clickBackToHome();
-                productPage.clickEditOnFirstProduct();
+            productPage
+              .getTextFromViewPage("Description:")
+              .then((viewDescription) => {
+                productPage
+                  .getTextFromViewPage("Category:")
+                  .then((viewCategory) => {
+                    productPage.clickBackToHome();
+                    productPage.clickEditOnFirstProduct();
 
-                productPage.verifyFieldValue("name", viewName);
-                productPage.verifyFieldValue("price", viewPrice);
-                productPage.verifyFieldValue("quantity", viewQuantity);
-                productPage.verifyFieldValue("description", viewDescription);
-                productPage.verifyFieldValue("category", viewCategory);
+                    productPage.verifyFieldValue("name", viewName);
+                    productPage.verifyFieldValue("price", viewPrice);
+                    productPage.verifyFieldValue("quantity", viewQuantity);
+                    productPage.verifyFieldValue(
+                      "description",
+                      viewDescription
+                    );
+                    productPage.verifyFieldValue("category", viewCategory);
+                  });
               });
-            });
           });
         });
       });

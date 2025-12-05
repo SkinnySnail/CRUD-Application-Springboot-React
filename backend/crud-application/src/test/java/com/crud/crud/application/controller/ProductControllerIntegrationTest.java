@@ -112,4 +112,95 @@ class ProductControllerIntegrationTest {
         mockMvc.perform(delete("/product/1"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @DisplayName("TC_INTER_6: GET /products/search?keyword - Tìm kiếm theo keyword")
+    void testSearchProductsByKeyword() throws Exception {
+        ProductDto product = new ProductDto("Laptop", 15000000.0, 10, "Electronics");
+        product.setId(1L);
+        when(productService.searchProducts("Laptop")).thenReturn(Arrays.asList(product));
+
+        mockMvc.perform(get("/products/search")
+                .param("keyword", "Laptop"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Laptop"));
+    }
+
+    @Test
+    @DisplayName("TC_INTER_7: GET /products/search?name - Tìm kiếm theo tên")
+    void testSearchProductsByName() throws Exception {
+        ProductDto product = new ProductDto("Mouse", 200000.0, 50, "Electronics");
+        product.setId(2L);
+        when(productService.searchByName("Mouse")).thenReturn(Arrays.asList(product));
+
+        mockMvc.perform(get("/products/search")
+                .param("name", "Mouse"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].name").value("Mouse"));
+    }
+
+    @Test
+    @DisplayName("TC_INTER_8: GET /products/search?category - Tìm kiếm theo danh mục")
+    void testSearchProductsByCategory() throws Exception {
+        List<ProductDto> products = Arrays.asList(
+                new ProductDto("Laptop", 15000000.0, 10, "Electronics"),
+                new ProductDto("Mouse", 200000.0, 50, "Electronics")
+        );
+        products.get(0).setId(1L);
+        products.get(1).setId(2L);
+        when(productService.searchByCategory("Electronics")).thenReturn(products);
+
+        mockMvc.perform(get("/products/search")
+                .param("category", "Electronics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @DisplayName("TC_INTER_9: GET /products/search - Không có param trả về tất cả")
+    void testSearchProductsNoParams() throws Exception {
+        List<ProductDto> products = Arrays.asList(
+                new ProductDto("Laptop", 15000000.0, 10, "Electronics"),
+                new ProductDto("Mouse", 200000.0, 50, "Electronics")
+        );
+        products.get(0).setId(1L);
+        products.get(1).setId(2L);
+        when(productService.getAllProducts()).thenReturn(products);
+
+        mockMvc.perform(get("/products/search"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @DisplayName("TC_INTER_10: GET /product/{id} - Không tìm thấy sản phẩm")
+    void testGetProductByIdNotFound() throws Exception {
+        when(productService.getProductById(999L)).thenReturn(null);
+
+        mockMvc.perform(get("/product/999"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("TC_INTER_11: PUT /product/{id} - Cập nhật sản phẩm không tồn tại")
+    void testUpdateProductNotFound() throws Exception {
+        ProductDto updateDto = new ProductDto("Laptop", 15000000.0, 10, "Electronics");
+        when(productService.updateProduct(eq(999L), any(ProductDto.class))).thenReturn(null);
+
+        mockMvc.perform(put("/product/999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("TC_INTER_12: DELETE /product/{id} - Xóa sản phẩm không tồn tại")
+    void testDeleteProductNotFound() throws Exception {
+        when(productService.deleteProduct(999L)).thenReturn(false);
+
+        mockMvc.perform(delete("/product/999"))
+                .andExpect(status().isNotFound());
+    }
 }

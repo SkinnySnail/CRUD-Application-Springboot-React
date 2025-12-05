@@ -1,0 +1,30 @@
+[1mdiff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml[m
+[1mindex c836645..cd5452d 100644[m
+[1m--- a/.github/workflows/ci.yml[m
+[1m+++ b/.github/workflows/ci.yml[m
+[36m@@ -79,9 +79,7 @@[m [mjobs:[m
+           node-version: "18"[m
+ [m
+       - name: Install Cypress dependencies[m
+[31m-        run: |[m
+[31m-          npm install[m
+[31m-          cd cypress && npm install[m
+[32m+[m[32m        run: npm install[m
+ [m
+       - name: Start Backend Server[m
+         working-directory: backend/crud-application[m
+[36m@@ -113,7 +111,6 @@[m [mjobs:[m
+           timeout 120 bash -c 'until curl -f http://localhost:3000 2>/dev/null; do sleep 2; done' || true[m
+ [m
+       - name: Run Cypress E2E Tests[m
+[31m-        working-directory: cypress[m
+         run: |[m
+           npx cypress run --config baseUrl=http://localhost:3000[m
+         continue-on-error: true[m
+[36m@@ -132,4 +129,4 @@[m [mjobs:[m
+         with:[m
+           name: cypress-videos[m
+           path: cypress/videos[m
+[31m-          if-no-files-found: ignore[m
+\ No newline at end of file[m
+[32m+[m[32m          if-no-files-found: ignore[m

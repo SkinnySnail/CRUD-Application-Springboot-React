@@ -50,7 +50,7 @@ class ProductServiceUnitTest {
         void testCreateProduct() {
                 // Arrange
                 ProductDto productDto = new ProductDto(
-                                "Laptop", 15000000.0, 10, "Electronics");
+                                "Laptop", 15000000.0, 10, "Electronics");// product có name là tên sản phẩm, price là giá sản phẩm, quantity là số lượng sản phẩm, category là danh mục sản phẩm
                 Product product = new Product(1L, "Laptop", 15000000.0, 10, "Electronics");
 
                 when(productRepository.save(any(Product.class)))
@@ -113,19 +113,19 @@ class ProductServiceUnitTest {
                 ProductDto updateDto = new ProductDto(
                                 "Laptop Updated", 14000000.0, 15, "Electronics");
 
-                Product existingProduct = new Product(
+                Product existingProduct = new Product( //tạo product mới
                                 1L, "Laptop", 15000000.0, 10, "Electronics");
 
-                Product updatedProduct = new Product(
+                Product updatedProduct = new Product( //tạo product mới
                                 1L, "Laptop Updated", 14000000.0, 15, "Electronics");
 
                 when(productRepository.findById(productId))
                                 .thenReturn(Optional.of(existingProduct));
-                when(productRepository.save(any(Product.class)))
+                when(productRepository.save(any(Product.class))) //khi save product, sẽ trả về updatedProduct
                                 .thenReturn(updatedProduct);
 
                 // Act
-                ProductDto result = productService.updateProduct(productId, updateDto);
+                ProductDto result = productService.updateProduct(productId, updateDto); //cập nhật product với id là productId và updateDto là dữ liệu cập nhật
 
                 // Assert
                 assertNotNull(result);
@@ -162,12 +162,12 @@ class ProductServiceUnitTest {
                 // Arrange
                 Long productId = 1L;
 
-                when(productRepository.existsById(productId))
+                when(productRepository.existsById(productId)) //khi tồn tại product với id là productId, sẽ trả về true
                                 .thenReturn(true);
-                doNothing().when(productRepository).deleteById(productId);
+                doNothing().when(productRepository).deleteById(productId); //khi delete product với id là productId, sẽ không làm gì
 
                 // Act
-                boolean result = productService.deleteProduct(productId);
+                boolean result = productService.deleteProduct(productId); //xóa product với id là productId
 
                 // Assert
                 assertTrue(result);
@@ -218,7 +218,7 @@ class ProductServiceUnitTest {
         }
 
         @Test
-        @DisplayName("TC_UNIT_11: Lay tat ca san pham voi pagination")
+        @DisplayName("TC_UNIT_11: Lay tat ca san pham voi pagination") //pagination là phân trang
         void testGetAllProductsWithPagination() {
                 // Arrange
                 Product product1 = new Product(
@@ -230,12 +230,12 @@ class ProductServiceUnitTest {
                 List<Product> allProducts = Arrays.asList(product1, product2, product3);
                 
                 // Page 0, size 2
-                Pageable pageable = PageRequest.of(0, 2);
-                List<Product> pageProducts = Arrays.asList(product1, product2);
-                Page<Product> productPage = new PageImpl<>(pageProducts, pageable, allProducts.size());
+                Pageable pageable = PageRequest.of(0, 2); //pageable là thông tin phân trang số 0, mỗi trang có 2 product
+                List<Product> pageProducts = Arrays.asList(product1, product2); //pageProducts là danh sách các product trên trang hiện tại
+                Page<Product> productPage = new PageImpl<>(pageProducts, pageable, allProducts.size()); //productPage là trang hiện tại
 
-                when(productRepository.findAll(pageable))
-                                .thenReturn(productPage);
+                when(productRepository.findAll(pageable)) //khi tìm kiếm product với pageable, sẽ trả về productPage
+                                .thenReturn(productPage); 
 
                 // Act
                 Page<ProductDto> result = productService.getAllProducts(pageable);
@@ -292,11 +292,11 @@ class ProductServiceUnitTest {
                                 "Laptop", 15000000.0, 10, "InvalidCategory");
 
                 // Act & Assert
-                assertThrows(IllegalArgumentException.class, () -> {
+                assertThrows(IllegalArgumentException.class, () -> { //nếu tạo product với category không hợp lệ, sẽ throw ra exception
                         productService.createProduct(productDto);
                 });
 
-                verify(productRepository, never()).save(any(Product.class));
+                verify(productRepository, never()).save(any(Product.class)); //không lưu product với category không hợp lệ
         }
 
         @Test
@@ -480,5 +480,70 @@ class ProductServiceUnitTest {
 
                 // Assert
                 assertNotNull(service);
+        }
+
+        // ===== ENTITY TESTS =====
+        @Test
+        @DisplayName("TC_ENTITY_1: Product entity - constructor và getters")
+        void testProductEntityConstructorAndGetters() {
+                Product product = new Product(1L, "Laptop", 999.99, 10, "Electronics");
+                
+                assertEquals(1L, product.getId());
+                assertEquals("Laptop", product.getProductName());
+                assertEquals(999.99, product.getPrice());
+                assertEquals(10, product.getQuantity());
+                assertEquals("Electronics", product.getCategory());
+        }
+
+        @Test
+        @DisplayName("TC_ENTITY_2: Product entity - setters")
+        void testProductEntitySetters() {
+                Product product = new Product();
+                
+                product.setId(2L);
+                product.setProductName("Phone");
+                product.setPrice(599.99);
+                product.setQuantity(20);
+                product.setCategory("Electronics");
+                product.setDescription("Smartphone");
+                
+                assertEquals(2L, product.getId());
+                assertEquals("Phone", product.getProductName());
+                assertEquals(599.99, product.getPrice());
+                assertEquals(20, product.getQuantity());
+                assertEquals("Electronics", product.getCategory());
+                assertEquals("Smartphone", product.getDescription());
+        }
+
+        @Test
+        @DisplayName("TC_ENTITY_3: Product entity - no-arg constructor")
+        void testProductEntityNoArgConstructor() {
+                Product product = new Product();
+                
+                assertNotNull(product);
+                assertNull(product.getId());
+                assertNull(product.getProductName());
+        }
+
+        @Test
+        @DisplayName("TC_ENTITY_4: Product entity - invalid category throws exception")
+        void testProductEntityInvalidCategory() {
+                Product product = new Product();
+                
+                assertThrows(IllegalArgumentException.class, () -> {
+                        product.setCategory("InvalidCategory");
+                });
+        }
+
+        @Test
+        @DisplayName("TC_ENTITY_5: Product entity - valid categories")
+        void testProductEntityValidCategories() {
+                Product product = new Product();
+                String[] validCategories = {"Electronics", "Books", "Clothing", "Home", "Toys", "Food"};
+                
+                for (String category : validCategories) {
+                        product.setCategory(category);
+                        assertEquals(category, product.getCategory());
+                }
         }
 }

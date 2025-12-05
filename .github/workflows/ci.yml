@@ -239,14 +239,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           destination_dir: ./
-
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: [backend-test, frontend-test, e2e-tests]
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     # Bước deploy thực tế sẽ thay đổi tùy nền tảng (Azure, AWS, Vercel, FTP, v.v.)
-  #     # Ví dụ: echo thông báo thành công (demo CD)
-  #     - name: Notify Deployment Success
-  #       run: echo "Deployment completed! (Demo CD step)"

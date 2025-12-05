@@ -1,0 +1,26 @@
+[33mcommit fd5d502d80db4662799713e50d44c67253a1a7f4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: nuyntai19 <tuantai1915@gmail.com>
+Date:   Sun Nov 30 23:31:40 2025 +0700
+
+    Bổ sung test cases để đạt coverage >= 85% và thêm README cho backend
+    
+    - Bổ sung 6 test cases cho AuthService (createUser, login(String,String), existsByUsername, findByUsername)
+    - Bổ sung 8 test cases cho ProductService (searchProducts, searchByName, searchByCategory, constructor)
+    - Coverage AuthService: 100% (vượt yêu cầu >= 85%)
+    - Coverage ProductService: 98% (vượt yêu cầu >= 85%)
+    - Thêm README.md cho backend với hướng dẫn đầy đủ
+    - Cập nhật .gitignore để loại trừ file .tex
+    - Tổng cộng: 68 tests (tất cả PASSED)
+
+ .gitignore                                         |   4 [32m+[m
+ backend/crud-application/README.md                 | 475 [32m++++++++++++++++[m
+ .../crud/application/service/AuthServiceTest.java  |  88 [32m+++[m
+ .../service/ProductServiceUnitTest.java            | 150 [32m+++++[m
+ cypress/e2e/product.e2e.cy.js                      | 466 [32m+++++++++[m[31m-------[m
+ cypress/support/pages/ProductPage.js               | 365 [32m+++++++[m[31m------[m
+ docs/QUESTION_2_UNIT_TESTING_ANALYSIS.md           | 338 [31m------------[m
+ docs/QUESTION_3_INTEGRATION_TESTING_ANALYSIS.md    | 322 [31m-----------[m
+ docs/QUESTION_4_MOCK_TESTING_ANALYSIS.md           | 211 [31m-------[m
+ docs/QUESTION_5_AUTOMATION_TESTING_ANALYSIS.md     | 564 [31m-------------------[m
+ docs/QUESTION_7_BONUS_TESTING_ANALYSIS.md          | 603 [31m---------------------[m
+ 11 files changed, 1170 insertions(+), 2416 deletions(-)
